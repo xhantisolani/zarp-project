@@ -5,13 +5,24 @@ import { CurrentConfig, Environment } from '../config'
 
 // Single copies of provider and wallet
 
-export async function disconnectWallet() {
-  // Get the provider.
-  const provider = new ethers.providers.Web3Provider(window.ethereum);
+export const disconnectWallet = async () => {
+  if (window.ethereum) {
+    try {
+      // Call the `disconnect` method to disconnect the wallet
+      await window.ethereum.disconnect();
+      // After disconnecting, you can update your UI or state to reflect that the wallet is disconnected.
+      // For example, set a state variable to null or update a connected status indicator.
+    } catch (error) {
+      // Handle any errors that occur during disconnection
+      console.error("Error disconnecting wallet:", error);
+    }
+  } else {
+    // MetaMask is not available or not installed
+    console.warn("MetaMask is not available.");
+  }
+};
 
-  // Clear the provider's cache.
-  provider.removeAllListeners();
-}
+
 // disconnect ends here
 const mainnetProvider = new ethers.providers.JsonRpcProvider(
   CurrentConfig.rpc.mainnet

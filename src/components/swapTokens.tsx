@@ -43,11 +43,12 @@ export function SwapTokens() {
  
 
   // functions to swap the tokens
-  const onCreateTrade = useCallback(async () => {   
+  const onCreateTrade = useCallback(async () => {
+    setTrade(await createTrade());
+  }, [ passedAmount]);
 
-    setTrade(await createTrade())
-   
-  }, [])
+  // Add a useEffect to call onCreateTrade when conditions change
+useEffect(() => {  onCreateTrade(); }, [ passedAmount]);
 
   const onTrade = useCallback(async (trade: TokenTrade | undefined) => {
     if (trade) {
@@ -156,7 +157,7 @@ return (
           <h2 className="error">Please install a wallet to use this example configuration   </h2>)}
       </div>
 
-      <p>Balance: {tokenInBalance}</p>
+      <p  className={styles.label}>Balance: {tokenInBalance}</p>
       <div className={styles.formGroup}>
         <input
           className={styles.formControl}

@@ -65,4 +65,8 @@
     font-size: xx-large;
     padding-top: 50px;
   }
+  .label {
+    color: hsl(240, 6%, 19%);;
+    font-weight: bold;
+  }
 

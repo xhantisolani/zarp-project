@@ -8,7 +8,7 @@ const providerUrl = 'YOUR_PROVIDER_URL';
 // Sample Token object from Uniswap (replace with actual token data)
 const uniswapTokens = Tokens;
 
-const SendTokens = () => {
+export const SendTokens = () => {
   const [wallet, setWallet] = useState<ethers.Wallet | null>(null);
   const [selectedToken, setSelectedToken] = useState('');
   const [recipientAddress, setRecipientAddress] = useState('');

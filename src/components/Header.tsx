@@ -35,14 +35,27 @@ const Header = () => {
     }
   };
 
+  const handleDisconnect = async () => {
+    try {
+      await disconnectWallet();
+      setAddress(null); // Update the UI to show "Connect wallet" after disconnection
+    } catch (error) {
+      console.error('Error disconnecting wallet:', error);
+    }
+  };
 
   return (
     <header className={styles.header}>
       {address ? (
         <div className={styles.connected}>
-          <p className={styles.connectBtn}>Connected to: {address.length > 10 ? `${address.slice(0, 10)}...` : address}</p>
-          <Button onClick={disconnectWallet}>Disconnect</Button>
+        <div className={styles.connectContainer}>
+          <p className={styles.connectBtn}>
+            Connected to: {address.length > 10 ? `${address.slice(0, 10)}...` : address}
+          </p>
+          
+          <Button onClick={handleDisconnect}>Disconnect</Button>
         </div>
+      </div>
       ) : (
         <Button onClick={connectWallet}>Connect wallet</Button>
       )}
