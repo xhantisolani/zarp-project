@@ -1,4 +1,4 @@
-import { TransactionState, getProvider, getWalletAddress } from '../libs/providers';
+import { TransactionState, getProvider, getWalletAddress, sendTransaction } from '../libs/providers';
 import { CurrentConfig, Environment } from '../config';
 import { useCallback, useEffect, useState } from 'react';
 import { createTrade, executeTrade, TokenTrade } from '../libs/trading';
@@ -18,12 +18,12 @@ export function SwapTokens() {
   const [txState, setTxState] = useState<TransactionState>(TransactionState.New)
   const [isLoading, setIsLoading] = useState(false);
 
-
+  //Upadate CurrentConfig
   CurrentConfig.tokens.amountIn = Number(passedAmount);
   const address = getWalletAddress();
-    CurrentConfig.wallet.address = address as string;
-  // set the selected Token
+  CurrentConfig.wallet.address = address as string;
 
+  // set the selected Token
   const [selectedTokenIn, setSelectedTokenIn] = useState<string>(
     CurrentConfig.tokens.in.address
   );
@@ -45,10 +45,8 @@ export function SwapTokens() {
   // functions to swap the tokens
   const onCreateTrade = useCallback(async () => {
     setTrade(await createTrade());
-  }, [ passedAmount]);
+  }, []);
 
-  // Add a useEffect to call onCreateTrade when conditions change
-useEffect(() => {  onCreateTrade(); }, [ passedAmount]);
 
   const onTrade = useCallback(async (trade: TokenTrade | undefined) => {
     if (trade) {
@@ -143,12 +141,13 @@ const setTokenOutFromAddress = async (selectedTokenOut: string) => {
 useEffect(() => {
   setTokenOutFromAddress(selectedTokenOut);
 }, [selectedTokenOut, passedAmount]);
-// write the selected Token balance  <h3>{`${CurrentConfig.tokens.in.symbol} Balance: ${tokenInBalance}`}</h3>
+
 return (  
   <>
   <div className={styles.Logo}>(ZARP)</div>
 
   <div className={styles.swapCard}>
+    
     <div>
 
       <div className={styles.body}>
@@ -157,7 +156,7 @@ return (
           <h2 className="error">Please install a wallet to use this example configuration   </h2>)}
       </div>
 
-      <p  className={styles.label}>Balance: {tokenInBalance}</p>
+      <p  className={styles.label}>Balance: {tokenInBalance}      Transaction State: {txState }</p>
       <div className={styles.formGroup}>
         <input
           className={styles.formControl}
@@ -197,7 +196,6 @@ return (
     </div>
     <button
       onClick={() => {
-        onCreateTrade();
         onTrade(trade);
       }}
       disabled={
@@ -209,8 +207,9 @@ return (
     >
       Swap
     </button>
+     {isLoading && <Spinner />}
   </div>
-  {isLoading && <Spinner />}
+ 
   </>
 );
 

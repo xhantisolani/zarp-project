@@ -23,7 +23,7 @@ export const disconnectWallet = async () => {
 };
 
 
-// disconnect ends here
+// create your provider
 const mainnetProvider = new ethers.providers.JsonRpcProvider(
   CurrentConfig.rpc.mainnet
 )
@@ -91,11 +91,10 @@ export async function connectBrowserExtensionWallet() {
 }
 
 // Internal Functionality
-
 function createWallet(): ethers.Wallet {
   let provider = mainnetProvider
-  if (CurrentConfig.env === Environment.LOCAL) {
-    provider = new ethers.providers.JsonRpcProvider(CurrentConfig.rpc.local)
+  if (CurrentConfig.env === Environment.MAINNET) {
+    provider = new ethers.providers.JsonRpcProvider(CurrentConfig.rpc.mainnet)
   }
   return new ethers.Wallet(CurrentConfig.wallet.privateKey, provider)
 }

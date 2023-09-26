@@ -111,9 +111,19 @@ import {
       maxPriorityFeePerGas: MAX_PRIORITY_FEE_PER_GAS,
     }
   
-    const res = await sendTransaction(tx)
-  
-    return res
+    const res = await sendTransaction(tx);
+
+    if (res === TransactionState.Failed) {
+      return TransactionState.Failed;
+    }
+    
+    if (res === TransactionState.Sending) {
+      return TransactionState.Sending;
+    }
+    return TransactionState.Sent;
+    
+    return res;
+    
   }
   
   // Helper Quoting and Pool Functions

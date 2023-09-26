@@ -34,7 +34,7 @@ export const CurrentConfig: ExampleConfig = {
   env: Environment.MAINNET,
   rpc: {
     local: 'http://localhost:8545',
-    mainnet: '',
+    mainnet: 'https://goerli.infura.io/v3/1d3f75d0dc7d49ada554948c3ec20f60',
   },
   wallet: {
     address: '' ,

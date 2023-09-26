@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import {
-  getProvider,
   getWalletAddress,
   connectBrowserExtensionWallet,
   disconnectWallet,
