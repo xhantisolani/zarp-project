@@ -50,7 +50,7 @@ export function SwapTokens() {
 
   const onTrade = useCallback(async (trade: TokenTrade | undefined) => {
     if (trade) {
-      setIsLoading(true); // Set loading to true before executing the trade
+      setIsLoading(false); // Set loading to true before executing the trade
   
       try {
         setTxState(await executeTrade(trade));
@@ -58,7 +58,7 @@ export function SwapTokens() {
         console.error('Error executing trade:', error);
         // Handle the error as needed
       } finally {
-        setIsLoading(false); // Set loading to false when the trade operation completes
+        setIsLoading(true); // Set loading to false when the trade operation completes
       }
     }
   }, []);

@@ -162,3 +162,4 @@ async function sendTransactionViaWallet(
     return TransactionState.Failed
   }
 }
+
