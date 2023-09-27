@@ -8,7 +8,7 @@
   );
   --primary-background-color: rgba(0,73,61,255);
   --secondary-background-color: rgba(255,255,255,255);
-  --tertiary-background-color: hsl(240, 6%, 26%);
+  --tertiary-background-color: hsl(240, 10%, 22%);
   --primary-font-color: hsl(0, 0%, 100%);
 }
 
@@ -21,7 +21,8 @@ body {
 }
 #heading {
   color: #ffe400;
-  text-align: center;}
+  text-align: center;
+}
 p {
   margin: 0;
 }

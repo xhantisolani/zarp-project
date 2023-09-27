@@ -8,7 +8,7 @@
     border-radius: 0.75rem;
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    gap: 1rem;
     width: 400px;
   }
   
@@ -20,8 +20,8 @@
     border: none;
     background-color: var(--tertiary-background-color);
     flex: 1;
-    padding: 0.5rem 1rem;
-    border-radius: 1.25rem 0 0 1.25rem;
+    padding: 0.8rem 1rem;
+    border-radius: 0.75rem 0 0 0.75rem;
     border: 1px solid var(--tertiary-background-color);
   }
   
@@ -54,10 +54,7 @@
     margin-left: calc(1rem + 1px);
     margin-top: 0.25rem;
   }
-  .body{
-    color:blue;
-    display: flex;
-  }
+  
   .Logo{
     font-weight: bold;
     text-align: center;
@@ -69,4 +66,37 @@
     color: hsl(240, 6%, 19%);;
     font-weight: bold;
   }
+
+/* CSS */
+.button {
+  background-color: #ffe400;
+  border-radius: 0.75rem 0 0 0.75rem;
+  color: #8a8a8a;
+  cursor: pointer;
+  font-weight: bold;
+  padding: 10px 15px;
+  text-align: center;
+  transition: 200ms;
+  width: 100%;
+  box-sizing: border-box;
+  border: 0;
+  font-size: 16px;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.button:not(:disabled):hover,
+.button:not(:disabled):focus {
+  outline: 0;
+  background: #ffe400;
+  box-shadow: 0 0 0 2px rgba(0,0,0,.2), 0 3px 8px 0 rgba(0,0,0,.15);
+}
+
+.button:disabled {
+  filter: saturate(0.6) opacity(0.8);
+  -webkit-filter: saturate(0.5) opacity(0.5);
+  cursor: not-allowed;
+}
+ 
 

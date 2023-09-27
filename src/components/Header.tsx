@@ -4,7 +4,7 @@ import {
   connectBrowserExtensionWallet,
   disconnectWallet,
 } from '../libs/providers'; // Replace 'YourWalletUtils' with the actual path to your file
-
+import { NavLink } from 'react-router-dom';
 import Button from './Button';
 import styles from './Header.module.css';
 
@@ -45,21 +45,24 @@ const Header = () => {
 
   return (
     <header className={styles.header}>
+      <div className={styles.navigation}>
+        <NavLink to="/">SWAP</NavLink>
+        <NavLink to="/transfertokens">SEND</NavLink>
+      </div>
       {address ? (
         <div className={styles.connected}>
-        <div className={styles.connectContainer}>
-          <p className={styles.connectBtn}>
-            Connected to: {address.length > 10 ? `${address.slice(0, 10)}...` : address}
-          </p>
-          
-          <Button onClick={handleDisconnect}>Disconnect</Button>
+          <div className={styles.connectContainer}>
+            <p className={styles.connectBtn}>
+            Connected to: {address.length > 10 ? `${address.slice(0, 5)}...${address.slice(-4)}` : address}
+            </p>
+            <Button onClick={handleDisconnect}>Disconnect</Button>
+          </div>
         </div>
-      </div>
       ) : (
         <Button onClick={connectWallet}>Connect wallet</Button>
       )}
     </header>
   );
-};
-
+  
+}
 export default Header;

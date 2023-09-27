@@ -2,8 +2,8 @@
   background-color: var(--primary-background-color);
   padding: 0.5rem 2rem;
   display: flex;
+  justify-content: space-between; /* Align items at both ends (left and right) */
   align-items: center; /* Center items vertically */
-  justify-content: flex-end;
 }
 
 .connectBtn {
@@ -15,6 +15,7 @@
   border-radius: 0.25rem;
   margin-right: 0.5rem; /* Add margin to separate buttons */
 }
+
 .connected {
   display: flex; /* Use flex to make children appear next to each other */
   align-items: center; /* Align children vertically in the center */
@@ -24,3 +25,29 @@
   display: flex; /* Use flex to make its children appear next to each other */
   align-items: center; /* Align children vertically in the center */
 }
+
+.navigation {
+  text-align: right;
+  margin-left: 2rem; /* Add margin to move navigation to the left */
+  padding-right: 2rem;
+}
+/* Add styles to the navigation links */
+.navigation a {
+  color: var(--text-color); /* Set the text color */
+  text-decoration: none; /* Remove underline */
+  font-size: 1.2rem; /* Adjust the font size */
+  margin: 0.5rem 1rem; /* Add spacing between links */
+  transition: color 0.3s ease; /* Smooth color transition on hover */
+}
+
+/* Change link color on hover */
+.navigation a:hover {
+  color: var(--accent-color-to); /* Change the color on hover */
+}
+
+/* Style for the active link */
+.navigation .active {
+  font-weight: bold; /* Make the active link bold */
+  color: var(--accent-color); /* Set the active link color */
+}
+

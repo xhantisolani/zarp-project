@@ -63,7 +63,6 @@ export function SwapTokens() {
     }
   }, []);
   
-
 // Function to update CurrentConfig.tokens.in
 const setTokenInFromAddress = async (selectedTokenIn: string) => {
   try {
@@ -195,6 +194,7 @@ return (
       </select>
     </div>
     <button
+    className={styles.button}
       onClick={() => {
         onTrade(trade);
       }}
