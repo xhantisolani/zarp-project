@@ -38,6 +38,8 @@ export async function getCurrencyBalance(
   return toReadableAmount(balance, decimals)
 }
 
+  
+
 // wraps ETH (rounding up to the nearest ETH for decimal places)
 export async function wrapETH(eth: number) {
   const provider = getProvider()

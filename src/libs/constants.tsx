@@ -39,7 +39,7 @@ export const ZARP_TOKEN = new Token(
 )
 export const ENS_TOKEN = new Token(
   SUPPORTED_CHAINS[0],
-  '0xC18360217D8F7Ab5e7c516566761Ea12Ce7F9D72',
+  '0x2170Ed0880ac9A755fd29B2688956BD959F933F8',
   18,
   'ENS',
   'Ethereum Name Service'

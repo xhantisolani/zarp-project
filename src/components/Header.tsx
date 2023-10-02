@@ -46,7 +46,7 @@ const Header = () => {
   return (
     <header className={styles.header}>
       <div className={styles.navigation}>
-        <NavLink to="/">SWAP</NavLink>
+        <NavLink to="/swaptokens">SWAP</NavLink>
         <NavLink to="/transfertokens">SEND</NavLink>
       </div>
       {address ? (

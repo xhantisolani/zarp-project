@@ -10,7 +10,7 @@ function App() {
       <div>
         <Header /> {}
         <Routes>
-          <Route path="/" element={<SwapTokens />} />
+          <Route path="/swaptokens" element={<SwapTokens />} />
           <Route path="/transfertokens" element={<SendTransaction />} />
         </Routes>
       </div>

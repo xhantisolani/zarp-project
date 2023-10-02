@@ -2,45 +2,94 @@ import { TransactionState, getProvider, getWalletAddress, sendTransaction } from
 import { CurrentConfig, Environment } from '../config';
 import { useCallback, useEffect, useState } from 'react';
 import { createTrade, executeTrade, TokenTrade } from '../libs/trading';
-import { Tokens } from '../libs/constants';
+import { ERC20_ABI, Tokens } from '../libs/constants';
 import { getCurrencyBalance } from '../libs/wallet';
 import { displayTrade } from '../libs/utils';
 import styles from './swapToken.module.css';
 import Spinner from './Spinner';
+import { Token } from '@uniswap/sdk-core';
+import { ethers } from 'ethers';
+import ErrorModal from './ErrorModal';
 
 export function SwapTokens() {
 
   // Create states to store selected token addresses and the amount to swap
-  const [passedAmount, setPassedAmount] = useState<string>('');
+  const [passedAmount, setPassedAmount] = useState<string>('');  
+  const [selectedTokenIn, setSelectedTokenIn] = useState<Token | null>(null);
+  const [selectedTokenOut, setSelectedTokenOut] = useState<Token | null>(null);
   const [tokenInBalance, setTokenInBalance] = useState<string>()
   const [tokenOutBalance, setTokenOutBalance] = useState<string>()
   const [trade, setTrade] = useState<TokenTrade>()
   const [txState, setTxState] = useState<TransactionState>(TransactionState.New)
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null); // State for storing error messages
+  const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
+  const tokenOptions = Tokens;
+// modal functions
+const openErrorModal = (errorMessage: string) => {
+  setError(errorMessage);
+  setIsErrorModalOpen(true);
+};
+
+const closeErrorModal = () => {
+  setError(null);
+  setIsErrorModalOpen(false);
+};
+
+
 
   //Upadate CurrentConfig
   CurrentConfig.tokens.amountIn = Number(passedAmount);
   const address = getWalletAddress();
   CurrentConfig.wallet.address = address as string;
 
-  // set the selected Token
-  const [selectedTokenIn, setSelectedTokenIn] = useState<string>(
-    CurrentConfig.tokens.in.address
-  );
-  const [selectedTokenOut, setSelectedTokenOut] = useState<string>(
-    CurrentConfig.tokens.out.address
-  );
 
-  const onSelectTokenIn = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedTokenIn(e.target.value);
-    setTokenInFromAddress(e.target.value);
-  };
-  const onSelectTokenOut = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedTokenOut(e.target.value);
-    setTokenOutFromAddress(e.target.value);
-  };
+  async function fetchWalletBalance(selectedToken: Token) {
+    try {
+      // Connect to Ethereum provider here
+      const provider = new ethers.providers.JsonRpcProvider(
+        CurrentConfig.rpc.mainnet
+      );
+      const address = getWalletAddress(); // Replace with your wallet address
   
- 
+      if (selectedToken.address === '0x2170Ed0880ac9A755fd29B2688956BD959F933F8') {
+        // Fetch ETH balance
+        const user = address as string;
+        const ethBalance = await provider.getBalance(user);
+        const ethBalanceInWei = ethBalance.toString(); // Convert to Wei
+  
+        // Ensure setWalletBalance receives a BigNumber or null
+        setTokenInBalance(ethBalanceInWei); 
+      } else {
+        // Fetch the balance of the selected ERC-20 token
+        const tokenContract = new ethers.Contract(
+          selectedToken.address,
+          ERC20_ABI,
+          provider
+        );
+  
+        const balance = await tokenContract.balanceOf(address);
+        setTokenInBalance(balance); // Convert the balance to a string
+      }
+    } catch (error) {
+      openErrorModal('Error fetching wallet balance');
+      return null; // Return null to indicate an error
+    }
+  }
+  
+
+function setUpCurrentConfig() {
+   try {
+         CurrentConfig.tokens.in = selectedTokenIn as Token;
+         CurrentConfig.tokens.amountIn = Number(passedAmount);
+         CurrentConfig.tokens.out = selectedTokenOut as Token;
+   }catch (error)
+   {
+    openErrorModal('Error setting up CurrentConfig');
+   }
+
+}
+
 
   // functions to swap the tokens
   const onCreateTrade = useCallback(async () => {
@@ -48,109 +97,35 @@ export function SwapTokens() {
   }, []);
 
 
+
+
   const onTrade = useCallback(async (trade: TokenTrade | undefined) => {
     if (trade) {
-      setIsLoading(false); // Set loading to true before executing the trade
+      setIsLoading(true); // Set loading to true before executing the trade
   
-      try {
+      try {        
         setTxState(await executeTrade(trade));
       } catch (error) {
-        console.error('Error executing trade:', error);
+        openErrorModal(`Token with address ${error} not found.`);
         // Handle the error as needed
       } finally {
-        setIsLoading(true); // Set loading to false when the trade operation completes
+        setIsLoading(false); // Set loading to false when the trade operation completes
       }
     }
   }, []);
   
-// Function to update CurrentConfig.tokens.in
-const setTokenInFromAddress = async (selectedTokenIn: string) => {
-  try {
-    // Find the token object that matches the selected token address
-    const selectedToken = Tokens.find((tokenOption) => tokenOption.address === selectedTokenIn);
 
-    // Check if the selected token was found
-    if (selectedToken) {
-      // Create a copy of the CurrentConfig object to modify
-      const updatedConfig = { ...CurrentConfig };
-      updatedConfig.tokens.in = selectedToken;
 
-      // You can optionally update the balances here if needed
-      const provider = getProvider();
-      const address = getWalletAddress();
-      if (provider && address) {
-        updatedConfig.tokens.amountIn = Number(passedAmount); // Update the amountIn
-        updatedConfig.tokens.in = selectedToken; // Update the selected token
-        setTokenInBalance(await getCurrencyBalance(provider, address, selectedToken));
-      }
-
-      // Update the CurrentConfig object with the new values
-      CurrentConfig.tokens.in = updatedConfig.tokens.in;
-      CurrentConfig.tokens.amountIn = updatedConfig.tokens.amountIn;
-
-      // You may want to trigger other updates here if needed
-    } else {
-      // Handle the case where the selected token address is not found
-      console.error(`Token with address ${selectedTokenIn} not found.`);
-    }
-  } catch (error) {
-    console.error("Error while setting token from address:", error);
-  }
-}
-
-useEffect(() => {
-  setTokenInFromAddress(selectedTokenIn);
-}, [selectedTokenIn, passedAmount]);
-
-// Function to update CurrentConfig.tokens.in
-const setTokenOutFromAddress = async (selectedTokenOut: string) => {
-  try {
-    // Find the token object that matches the selected token address
-    const selectedToken = Tokens.find((tokenOption) => tokenOption.address === selectedTokenOut);
-
-    // Check if the selected token was found
-    if (selectedToken) {
-      // Create a copy of the CurrentConfig object to modify
-      const updatedConfig = { ...CurrentConfig };
-      updatedConfig.tokens.out = selectedToken;
-
-      // You can optionally update the balances here if needed
-      const provider = getProvider();
-      const address = getWalletAddress();
-      if (provider && address) {
-        updatedConfig.tokens.amountIn = Number(passedAmount); // Update the amountIn
-        updatedConfig.tokens.out = selectedToken; // Update the selected token
-        setTokenOutBalance(await getCurrencyBalance(provider, address, selectedToken));
-      }
-
-      // Update the CurrentConfig object with the new values
-      CurrentConfig.tokens.in = updatedConfig.tokens.in;
-      CurrentConfig.tokens.amountIn = updatedConfig.tokens.amountIn;
-
-      // You may want to trigger other updates here if needed
-    } else {
-      // Handle the case where the selected token address is not found
-      console.error(`Token with address ${selectedTokenOut} not found.`);
-    }
-  } catch (error) {
-    console.error("Error while setting token from address:", error);
-  }
-}
-
-useEffect(() => {
-  setTokenOutFromAddress(selectedTokenOut);
-}, [selectedTokenOut, passedAmount]);
 
 return (  
   <>
   <div className={styles.Logo}>(ZARP)</div>
-
+ 
   <div className={styles.swapCard}>
     
     <div>
 
       <div className={styles.body}>
-
         {CurrentConfig.env === Environment.MAINNET && getProvider() === null && (
           <h2 className="error">Please install a wallet to use this example configuration   </h2>)}
       </div>
@@ -167,16 +142,26 @@ return (
               setPassedAmount(inputValue);
               onCreateTrade();
             } else {
-              console.error('Invalid input. Please enter a valid number.');
+              openErrorModal('Invalid input. Please enter a valid number.');
             }
           } } />
-        <select value={selectedTokenIn} onChange={onSelectTokenIn}>
-          {Tokens.map((tokenOption) => (
-            <option key={tokenOption.address} value={tokenOption.address}>
-              {tokenOption.symbol}
-            </option>
-          ))}
-        </select>
+        <select
+        value={selectedTokenIn ? selectedTokenIn.address : ''}
+        onChange={(e) => {
+          const selectedTokenAddress = e.target.value;
+          const token = tokenOptions.find((token) => token.address === selectedTokenAddress);
+          
+          setSelectedTokenIn(token || null);
+        }}
+      >
+        <option value="">Token</option>
+        {tokenOptions.map((token) => (
+           <option key={token.address} value={token.address}>
+           {token.symbol}
+         </option>
+        ))}
+      </select>
+
       </div>
     </div>
     <div className={styles.formGroup}>
@@ -185,11 +170,20 @@ return (
         placeholder={'0.00'}
         value={trade ? ` ${displayTrade(trade)}` : ''} />
         
-      <select value={selectedTokenOut} onChange={onSelectTokenOut}>
-        {Tokens.map((tokenOption) => (
-          <option key={tokenOption.address} value={tokenOption.address}>
-            {tokenOption.symbol}
-          </option>
+        <select
+        value={selectedTokenOut ? selectedTokenOut.address : ''}
+        onChange={(e) => {
+          const selectedTokenAddress = e.target.value;
+          const token = tokenOptions.find((token) => token.address === selectedTokenAddress);
+          
+          setSelectedTokenOut(token || null);
+        }}
+      >
+        <option value="">Token</option>
+        {tokenOptions.map((token) => (
+           <option key={token.address} value={token.address}>
+           {token.symbol}
+         </option>
         ))}
       </select>
     </div>
@@ -208,6 +202,8 @@ return (
       Swap
     </button>
      {isLoading && <Spinner />}
+     {/* Render the ErrorModal component */}
+      <ErrorModal isOpen={isErrorModalOpen} onClose={closeErrorModal} error={error} />
   </div>
  
   </>

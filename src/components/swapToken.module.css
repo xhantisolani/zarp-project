@@ -62,6 +62,12 @@
     font-size: xx-large;
     padding-top: 50px;
   }
+  .userView{
+    font-weight: bold;
+    color: #ffe400;
+    font-size: xx-large;
+    padding-left: 30px;
+  }
   .label {
     color: hsl(240, 6%, 19%);;
     font-weight: bold;
