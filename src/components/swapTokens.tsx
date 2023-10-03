@@ -25,6 +25,7 @@ export function SwapTokens() {
   const [error, setError] = useState<string | null>(null); // State for storing error messages
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
   const tokenOptions = Tokens;
+
 // modal functions
 const openErrorModal = (errorMessage: string) => {
   setError(errorMessage);
@@ -36,30 +37,24 @@ const closeErrorModal = () => {
   setIsErrorModalOpen(false);
 };
 
-
-
-  //Upadate CurrentConfig
-  CurrentConfig.tokens.amountIn = Number(passedAmount);
-  const address = getWalletAddress();
-  CurrentConfig.wallet.address = address as string;
-
-
   async function fetchWalletBalance(selectedToken: Token) {
     try {
       // Connect to Ethereum provider here
-      const provider = new ethers.providers.JsonRpcProvider(
-        CurrentConfig.rpc.mainnet
-      );
-      const address = getWalletAddress(); // Replace with your wallet address
+      const provider = new ethers.providers.JsonRpcProvider(CurrentConfig.rpc.mainnet);
+
+      const address = getWalletAddress(); // user wallet address
   
-      if (selectedToken.address === '0x2170Ed0880ac9A755fd29B2688956BD959F933F8') {
+      if (selectedToken.name === 'Ethereum Name Service') {
         // Fetch ETH balance
         const user = address as string;
         const ethBalance = await provider.getBalance(user);
-        const ethBalanceInWei = ethBalance.toString(); // Convert to Wei
+
+        const ethBalanceInEther = ethers.utils.formatEther(ethBalance);
+
+        const ethBalanceInWei = ethBalanceInEther.toString(); 
   
         // Ensure setWalletBalance receives a BigNumber or null
-        setTokenInBalance(ethBalanceInWei); 
+        setTokenInBalance(ethBalanceInWei.toString()); 
       } else {
         // Fetch the balance of the selected ERC-20 token
         const tokenContract = new ethers.Contract(
@@ -69,20 +64,25 @@ const closeErrorModal = () => {
         );
   
         const balance = await tokenContract.balanceOf(address);
-        setTokenInBalance(balance); // Convert the balance to a string
+
+        setTokenInBalance(balance.toString()); // Convert the balance to a string
       }
     } catch (error) {
       openErrorModal('Error fetching wallet balance');
       return null; // Return null to indicate an error
     }
   }
-  
 
+
+  
+//Upadate CurrentConfig
 function setUpCurrentConfig() {
    try {
          CurrentConfig.tokens.in = selectedTokenIn as Token;
          CurrentConfig.tokens.amountIn = Number(passedAmount);
          CurrentConfig.tokens.out = selectedTokenOut as Token;
+         CurrentConfig.wallet.address = getWalletAddress() as string;
+         
    }catch (error)
    {
     openErrorModal('Error setting up CurrentConfig');
@@ -150,8 +150,11 @@ return (
         onChange={(e) => {
           const selectedTokenAddress = e.target.value;
           const token = tokenOptions.find((token) => token.address === selectedTokenAddress);
-          
           setSelectedTokenIn(token || null);
+          // set up current 
+          setUpCurrentConfig();
+          // set the balence after the selected token in has been set
+          fetchWalletBalance(token as Token)
         }}
       >
         <option value="">Token</option>
@@ -168,14 +171,14 @@ return (
       <input
         className={styles.formControl}
         placeholder={'0.00'}
-        value={trade ? ` ${displayTrade(trade)}` : ''} />
+        value={trade ? ` ${displayTrade(trade)}` : ''}
+        disabled />
         
         <select
         value={selectedTokenOut ? selectedTokenOut.address : ''}
         onChange={(e) => {
           const selectedTokenAddress = e.target.value;
-          const token = tokenOptions.find((token) => token.address === selectedTokenAddress);
-          
+          const token = tokenOptions.find((token) => token.address === selectedTokenAddress);          
           setSelectedTokenOut(token || null);
         }}
       >

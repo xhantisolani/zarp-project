@@ -6,19 +6,22 @@ import { Token } from '@uniswap/sdk-core';
 import { getWalletAddress } from '../libs/providers';
 import styles from './swapToken.module.css';
 import ErrorModal from './ErrorModal';
+import { formatUnits } from 'ethers/lib/utils';
 
 export function SendTransaction() {
   const [to, setTo] = useState('');
   const [amount, setAmount] = useState('');
+  const [gas, setGas] = useState('');
   const [selectedToken, setSelectedToken] = useState<Token | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [transactionHash, setTransactionHash] = useState('');
-  const [walletBalance, setWalletBalance] = useState<ethers.BigNumber | null>(null);
   const tokenList = Tokens;
   const [error, setError] = useState<string | null>(null); // State for storing error messages
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
-
+  const ERC20 = require("@uniswap/sdk-core").ERC20;
+  const [tokenInBalance, setTokenInBalance] = useState<string>()
+  
   // Ethereum address regex pattern
   const ethereumAddressPattern = /^0x[a-fA-F0-9]{40}$/;
 
@@ -39,41 +42,43 @@ export function SendTransaction() {
 
   // Load the wallet balance for the selected token
 useEffect(() => {
-  const fetchWalletBalance = async () => {
-    if (selectedToken) {
+  async function fetchWalletBalance(selectedToken: Token) {
+    try {
       // Connect to Ethereum provider here
-      const provider = new ethers.providers.JsonRpcProvider(
-        CurrentConfig.rpc.mainnet
-      );
-      const address = getWalletAddress(); // Replace with your wallet address
+      const provider = new ethers.providers.JsonRpcProvider(CurrentConfig.rpc.mainnet);
 
-      // Check if the selected token address is Ethereum (ETH)
-      if (selectedToken.address === '0x2170Ed0880ac9A755fd29B2688956BD959F933F8') {
+      const address = getWalletAddress(); // user wallet address
+  
+      if (selectedToken.name === 'Ethereum Name Service') {
+        // Fetch ETH balance
         const user = address as string;
         const ethBalance = await provider.getBalance(user);
+
         const ethBalanceInEther = ethers.utils.formatEther(ethBalance);
 
+        const ethBalanceInWei = ethBalanceInEther.toString(); 
+  
         // Ensure setWalletBalance receives a BigNumber or null
-        setWalletBalance(
-          ethBalanceInEther as unknown as BigNumber | null
-        );
+        setTokenInBalance(ethBalanceInWei.toString()); 
       } else {
-        // Use the else statement to check for the balance of the selected token
+        // Fetch the balance of the selected ERC-20 token
         const tokenContract = new ethers.Contract(
           selectedToken.address,
           ERC20_ABI,
           provider
         );
-
+  
         const balance = await tokenContract.balanceOf(address);
 
-        // Ensure setWalletBalance receives a BigNumber or null
-        setWalletBalance(balance as BigNumber | null);
+        setTokenInBalance(balance.toString()); // Convert the balance to a string
       }
+    } catch (error) {
+      openErrorModal('Error fetching wallet balance');
+      return null; // Return null to indicate an error
     }
-  };
+  }
 
-  fetchWalletBalance();
+  fetchWalletBalance(selectedToken as Token);
 }, [selectedToken]);
 
 // Function to convert an amount to the ERC-20 token's currency type
@@ -107,17 +112,72 @@ async function convertCurrency(amount: string, selectedToken: Token) {
   }
 }
 
-    
+
+
+function convertAmount(amounth: string, token: Token) {
+  if (token.decimals == 6)
+  {
+        const amountERC20 = ethers.utils.parseUnits(amount, 6);
+        return amountERC20
+  } else if (token.decimals == 18)
+  {const amountERC20 = ethers.utils.parseUnits(amount, 18);
+   return amountERC20
+  }
+}
+
+
+async function getGasEstimate(token: Token, amount: string, recipientAddress: string) {
+  const provider = new ethers.providers.JsonRpcProvider(CurrentConfig.rpc.mainnet);
+  const address  = getWalletAddress()
+  
+  // Determine if the token is an ERC20 token.
+  if (token.symbol === 'ENS') {
+    // Get the estimated gas cost for sending Ethereum
+    const gasEstimate = await provider.estimateGas({
+      to: recipientAddress,
+      value: convertAmount(amount, token),
+    });
+   
+    // Get the gas price
+    const gasPrice = await provider.getGasPrice();
+    // Calculate the total gas cost
+    const gasCost = gasEstimate.mul(gasPrice);
+    // Convert the gas cost to a string
+    const gasCostString = ethers.utils.formatEther(gasCost);
+    // Set the gas state
+    setGas(gasCostString);
+    // Return the gas cost as a string
+    return gasCostString;
+  } else {
+     // Create an instance of the ERC20 contract
+     const erc20Contract = new ethers.Contract(token.address, ERC20_ABI, provider);
+    // The token is an ERC20 token.
+    const gasEstimate = await erc20Contract.estimateGas.transfer(
+      recipientAddress, 
+      convertAmount(amount, token),
+      );
+      const gasPrice = await provider.getGasPrice();
+      // Calculate the total gas cost
+      const gasCost = gasEstimate.mul(gasPrice);
+      const gasCostString = ethers.utils.formatEther(gasEstimate);
+
+    return setGas(gasCostString);
+  }
+}
+
+
+
+
 
   const handleSendTransaction = async () => {
-  if (!isValidEthereumAddress(to) || !convertCurrency(amount, selectedToken as Token) || !selectedToken || !walletBalance) {
+  if (!isValidEthereumAddress(to) || !convertCurrency(amount, selectedToken as Token) || !selectedToken || !tokenInBalance) {
     openErrorModal('Invalid input or token selection');
 
     return;
   }
 
   const sendAmount = await convertCurrency(amount, selectedToken);
-  if (sendAmount > walletBalance) {
+  if (sendAmount > Number(tokenInBalance)) {
     openErrorModal('Insufficient balance');
     return;
   }
@@ -130,7 +190,7 @@ async function convertCurrency(amount: string, selectedToken: Token) {
     const signer = provider.getSigner();
 
     let tx;
-    if (selectedToken.address === '0x2170Ed0880ac9A755fd29B2688956BD959F933F8') {
+    if (selectedToken.name === 'Ethereum Name Service') {
       // Send Ether transaction
       tx = await signer.sendTransaction({
         to: to,
@@ -167,7 +227,7 @@ async function convertCurrency(amount: string, selectedToken: Token) {
       }}
     >
      <div className={styles.userView}>  Token: {selectedToken?.symbol}</div>
-     <div className={styles.userView}>  Balance: {walletBalance ? walletBalance.toString() : ''} 
+     <div className={styles.userView}>  Balance: {tokenInBalance} 
     </div>
     <div className={styles.swapCard}>
     <div>
@@ -186,17 +246,19 @@ async function convertCurrency(amount: string, selectedToken: Token) {
       <input
         className={styles.formControl}
         aria-label="Amount (ether)"
-        onChange={(e) => setAmount(e.target.value)}
+        onChange={(e) => {setAmount(e.target.value);
+        getGasEstimate(selectedToken as Token, amount, to)}}
         placeholder="0.00"
         value={amount}
+        disabled={!isValidEthereumAddress(to)  }
       />
       <select
         value={selectedToken ? selectedToken.address : ''}
         onChange={(e) => {
           const selectedTokenAddress = e.target.value;
-          const token = tokenList.find((token) => token.address === selectedTokenAddress);
-          
+          const token = tokenList.find((token) => token.address === selectedTokenAddress);          
           setSelectedToken(token || null);
+          
         }}
       >
         <option value="">Select Token</option>
@@ -208,9 +270,14 @@ async function convertCurrency(amount: string, selectedToken: Token) {
       </select>
       </div>
        </div>
-       <button className={styles.button} disabled={isLoading || !isValidEthereumAddress(to) || !convertCurrency(amount, selectedToken as Token) || !selectedToken || !walletBalance || !amount} >
+       <button className={styles.button} disabled={isLoading || !isValidEthereumAddress(to) || !convertCurrency(amount, selectedToken as Token) || !selectedToken || !tokenInBalance || !amount} >
         {isLoading ? 'Sending...' : 'Send'}
       </button>
+      {/* Display the gas label and value if gas is not null */}
+     
+       <div className={styles.label}>Gas: {gas}</div>
+
+
       {isSuccess && (
         <div>
           Successfully sent {amount} {selectedToken?.name} {to}

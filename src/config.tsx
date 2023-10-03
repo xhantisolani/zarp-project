@@ -45,7 +45,7 @@ export const CurrentConfig: ExampleConfig = {
     in: WETH_TOKEN,
     amountIn: 1,
     out: USDC_TOKEN,
-    poolFee: FeeAmount.MEDIUM,
+    poolFee: FeeAmount.LOWEST,
   },
 }
 
