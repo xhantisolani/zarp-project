@@ -3,7 +3,7 @@ import { ethers, BigNumber, BigNumberish } from 'ethers';
 import { ERC20_ABI, Tokens } from '../libs/constants';// Import the Token type from Uniswap or a similar library
 import { CurrentConfig } from '../config';
 import { Token } from '@uniswap/sdk-core';
-import { getWalletAddress } from '../libs/providers';
+import { getWalletAddress, sendTransaction } from '../libs/providers';
 import styles from './swapToken.module.css';
 import ErrorModal from './ErrorModal';
 import { convertAmount } from '../libs/conversion';
@@ -156,21 +156,26 @@ export function SendTransaction() {
   
     try {
       // Connect to your Ethereum provider here
-      const provider = new ethers.providers.JsonRpcProvider(
-        CurrentConfig.rpc.mainnet
-      );
+      
+      const provider = new ethers.providers.JsonRpcProvider(CurrentConfig.rpc.mainnet);
+    
       const signer = provider.getSigner();
-  
+
+
       let tx;
       if (selectedToken.name === 'Ethereum Name Service') {
         // Send Ether transaction
+
         // Convert the amount to Wei
         const amountInWei = ethers.utils.parseEther(amount);
-  
-        tx = await signer.sendTransaction({
-          to: to,
-          value: amountInWei, // Use amountInWei instead of amount
-        });
+
+        const transactionRequest = {
+          to: to, //  recipient's Ethereum address
+          value: amountInWei, //  amount to send in Ether
+        };
+
+        sendTransaction(transactionRequest);
+       
       } else {
         // Send token transaction
         const tokenContract = new ethers.Contract(
@@ -275,3 +280,17 @@ export function SendTransaction() {
   );
 }
  export default SendTransaction;
+
+function sendTransactionViaWallet(transactionRequest: {
+  to: string; // Replace with the recipient's Ethereum address
+  value: ethers.BigNumber;
+}) {
+  throw new Error('Function not implemented.');
+}
+function sendTransactionViaExtension(transactionRequest: {
+  to: string; //  recipient's Ethereum address
+  value: ethers.BigNumber;
+}) {
+  throw new Error('Function not implemented.');
+}
+
