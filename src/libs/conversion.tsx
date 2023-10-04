@@ -28,8 +28,7 @@ function countDecimals(x: number) {
   return x.toString().split('.')[1].length || 0
 }
 
-export function convertAmount(amount: string, token: Token) {
-  // Use token.decimals as the second argument for ethers.utils.parseUnits
-  const amountERC20 = ethers.utils.parseUnits(amount, token.decimals);
-  return Number(amountERC20);
+export function convertAmount(amount: string, token: Token): number {
+  const amountBN = ethers.utils.parseUnits(amount, token.decimals);
+  return Number(parseFloat(ethers.utils.formatUnits(amountBN, token.decimals)));
 }
