@@ -299,6 +299,7 @@ export function SendTransaction() {
     </>
   );
 }
+
  export default SendTransaction;
 
 function sendTransactionViaWallet(transactionRequest: {
