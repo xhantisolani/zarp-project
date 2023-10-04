@@ -43,7 +43,7 @@ export const CurrentConfig: ExampleConfig = {
   },
   tokens: {
     in: WETH_TOKEN,
-    amountIn: 1,
+    amountIn: 0,
     out: USDC_TOKEN,
     poolFee: FeeAmount.LOWEST,
   },

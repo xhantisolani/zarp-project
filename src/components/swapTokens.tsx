@@ -15,17 +15,17 @@ import ErrorModal from './ErrorModal';
 export function SwapTokens() {
 
   // Create states to store selected token addresses and the amount to swap
-  const [passedAmount, setPassedAmount] = useState<string>('');  
   const [selectedTokenIn, setSelectedTokenIn] = useState<Token | null>(null);
   const [selectedTokenOut, setSelectedTokenOut] = useState<Token | null>(null);
   const [tokenInBalance, setTokenInBalance] = useState<string>()
-  const [tokenOutBalance, setTokenOutBalance] = useState<string>()
+  const [passedAmount, sePassedAmount] = useState<string>()
   const [trade, setTrade] = useState<TokenTrade>()
-  const [txState, setTxState] = useState<TransactionState>(TransactionState.New)
+  const [txState, setTxState] = useState<TransactionState>()
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null); // State for storing error messages
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
   const tokenOptions = Tokens;
+
 
 // modal functions
 const openErrorModal = (errorMessage: string) => {
@@ -65,8 +65,10 @@ const closeErrorModal = () => {
         );
   
         const balance = await tokenContract.balanceOf(address);
+        
+        const balanceAmount = ethers.utils.formatEther(balance);
 
-        setTokenInBalance(balance.toString()); // Convert the balance to a string
+        setTokenInBalance( balanceAmount.toString()); // Convert the balance to a string
       }
     } catch (error) {
       openErrorModal('Error fetching wallet balance');
@@ -74,25 +76,42 @@ const closeErrorModal = () => {
     }
   }
 
+  function setTokenIn(token: Token) {
+    try {
+          CurrentConfig.tokens.in = token;
+          
+    }catch (error)
+    {
+     openErrorModal('Error setting up CurrentConfig');
+    }
+ 
+ }
+ function setTokenOut(token: Token) {
+  try {
+        CurrentConfig.tokens.out = token;
+        
+  }catch (error)
+  {
+   openErrorModal('Error setting up CurrentConfig');
+  }
 
-  
-//Upadate CurrentConfig
-function setUpCurrentConfig() {
-   try {
-         CurrentConfig.tokens.in = selectedTokenIn as Token;
-         CurrentConfig.tokens.amountIn = Number(passedAmount);
-         CurrentConfig.tokens.out = selectedTokenOut as Token;
-         CurrentConfig.wallet.address = getWalletAddress() as string;
-         
-   }catch (error)
-   {
-    openErrorModal('Error setting up CurrentConfig');
-   }
+}
+
+function setAmountIn(amount: string) {
+  try {
+        CurrentConfig.tokens.amountIn = Number(amount);
+        sePassedAmount(amount)
+        return  CurrentConfig.tokens.amountIn;
+        
+  }catch (error)
+  {
+   openErrorModal('Error setting up CurrentConfig');
+  }
 
 }
 
 
-  // functions to swap the tokens
+  // functions to set up the trade the tokens
   const onCreateTrade = useCallback(async () => {
     setTrade(await createTrade());
   }, []);
@@ -117,7 +136,6 @@ function setUpCurrentConfig() {
   
 
 
-
 return (  
   <>
   <div className={styles.Logo}>(ZARP)</div>
@@ -136,11 +154,12 @@ return (
         <input
           className={styles.formControl}
           placeholder={'0.00'}
-          value={String(passedAmount)}
+          name={"displayFirstToken"}
+          value={passedAmount}
           onChange={(e) => {
             const inputValue = e.target.value;
             if (!isNaN(Number(inputValue))) {
-              setPassedAmount(inputValue);
+              setAmountIn(inputValue)
               onCreateTrade();
             } else {
               openErrorModal('Invalid input. Please enter a valid number.');
@@ -148,14 +167,14 @@ return (
           } } />
         <select
         value={selectedTokenIn ? selectedTokenIn.address : ''}
+        name={"FirstToken"}
         onChange={(e) => {
           const selectedTokenAddress = e.target.value;
           const token = tokenOptions.find((token) => token.address === selectedTokenAddress);
           setSelectedTokenIn(token || null);
-          // set up current 
-          setUpCurrentConfig();
           // set the balence after the selected token in has been set
-          fetchWalletBalance(token as Token)
+          fetchWalletBalance(token as Token);
+          setTokenIn(token as Token);
         }}
       >
         <option value="">Token</option>
@@ -172,15 +191,18 @@ return (
       <input
         className={styles.formControl}
         placeholder={'0.00'}
+        name={"displaySecondToken"}
         value={trade ? ` ${displayTrade(trade)}` : ''}
         disabled />
         
         <select
         value={selectedTokenOut ? selectedTokenOut.address : ''}
+        name={"SecondToken"}
         onChange={(e) => {
           const selectedTokenAddress = e.target.value;
           const token = tokenOptions.find((token) => token.address === selectedTokenAddress);          
           setSelectedTokenOut(token || null);
+          setTokenOut(token as Token);
         }}
       >
         <option value="">Token</option>
