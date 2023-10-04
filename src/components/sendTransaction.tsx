@@ -157,7 +157,7 @@ export function SendTransaction() {
     try {
       // Connect to your Ethereum provider here
       
-      const provider = new ethers.providers.JsonRpcProvider(CurrentConfig.rpc.mainnet);
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
     
       const signer = provider.getSigner();
 
