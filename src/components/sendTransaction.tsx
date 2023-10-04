@@ -83,26 +83,36 @@ export function SendTransaction() {
 
   async function getGasEstimate(token: Token, amount: string, recipientAddress: string) {
     const provider = new ethers.providers.JsonRpcProvider(CurrentConfig.rpc.mainnet);
-    const address  = getWalletAddress()
     
     // Determine if the token is an ERC20 token.
     if (token.symbol === 'ENS') {
-      // Get the estimated gas cost for sending Ethereum
-      const gasEstimate = await provider.estimateGas({
-        to: recipientAddress,
-        value: convertAmount(amount, token),
-      });
-     
-      // Get the gas price
-      const gasPrice = await provider.getGasPrice();
-      // Calculate the total gas cost
-      const gasCost = gasEstimate.mul(gasPrice);
-      // Convert the gas cost to a string
-      const gasCostString = ethers.utils.formatEther(gasCost);
-      // Set the gas state
-      setGas(gasCostString);
-      
-    } else {
+      try {
+        // Convert the amount to Wei
+        const amountInWei = ethers.utils.parseEther(amount);
+    
+        // Get the estimated gas cost for sending Ethereum
+        const gasEstimate = await provider.estimateGas({
+          to: recipientAddress,
+          value: amountInWei,
+        });
+    
+        // Get the gas price
+        const gasPrice = await provider.getGasPrice();
+        
+        // Calculate the total gas cost
+        const gasCost = gasEstimate.mul(gasPrice);
+    
+        // Convert the gas cost to a string
+        const gasCostString = ethers.utils.formatEther(gasCost);
+    
+        // Set the gas state
+        setGas(gasCostString);
+      } catch (error) {
+        openErrorModal('Recipient Address not valid');
+        return null; // Return null to indicate an error
+      }
+    }
+     else {
       try{
        // Create an instance of the ERC20 contract
        const erc20Contract = new ethers.Contract(token.address, ERC20_ABI, provider);
@@ -132,52 +142,58 @@ export function SendTransaction() {
 
 
   const handleSendTransaction = async () => {
-  if (!isValidEthereumAddress(to)  || !selectedToken || !tokenInBalance) {
-    openErrorModal('Invalid input or token selection');
-
-    return;
-  }
-
- 
-  
-  if (Number(amount) > Number(tokenInBalance)) {
-    openErrorModal('Insufficient balance');
-    return;
-  }
-
-  setIsLoading(true);
-
-  try {
-    // Connect to your Ethereum provider here
-    const provider = new ethers.providers.JsonRpcProvider(CurrentConfig.rpc.mainnet);
-    const signer = provider.getSigner();
-
-    let tx;
-    if (selectedToken.name === 'Ethereum Name Service') {
-      // Send Ether transaction
-      tx = await signer.sendTransaction({
-        to: to,
-        value:amount,
-      });
-    } else {
-      // Send token transaction
-      const tokenContract = new ethers.Contract(
-        selectedToken.address,
-        ERC20_ABI,
-        signer
-      );
-
-      tx = await tokenContract.transfer(to,amount);
+    if (!isValidEthereumAddress(to) || !selectedToken || !tokenInBalance) {
+      openErrorModal('Invalid input or token selection');
+      return;
     }
-
-    setIsSuccess(true);
-    setTransactionHash(tx.hash);
-  } catch (error) {
-    openErrorModal('Error sending transaction:');
-  } finally {
-    setIsLoading(false);
-  }
-};
+  
+    if (Number(amount) > Number(tokenInBalance)) {
+      openErrorModal('Insufficient balance');
+      return;
+    }
+  
+    setIsLoading(true);
+  
+    try {
+      // Connect to your Ethereum provider here
+      const provider = new ethers.providers.JsonRpcProvider(
+        CurrentConfig.rpc.mainnet
+      );
+      const signer = provider.getSigner();
+  
+      let tx;
+      if (selectedToken.name === 'Ethereum Name Service') {
+        // Send Ether transaction
+        // Convert the amount to Wei
+        const amountInWei = ethers.utils.parseEther(amount);
+  
+        tx = await signer.sendTransaction({
+          to: to,
+          value: amountInWei, // Use amountInWei instead of amount
+        });
+      } else {
+        // Send token transaction
+        const tokenContract = new ethers.Contract(
+          selectedToken.address,
+          ERC20_ABI,
+          signer
+        );
+  
+        // Convert the amount to the appropriate token units (e.g., wei for ERC-20 with 18 decimals)
+        const amountInTokenUnits = ethers.utils.parseUnits(amount, selectedToken.decimals);
+  
+        tx = await tokenContract.transfer(to, amountInTokenUnits);
+      }
+  
+      setIsSuccess(true);
+      setTransactionHash(tx.hash);
+    } catch (error) {
+      openErrorModal('Error sending transaction:');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
 
   return (
     <>
