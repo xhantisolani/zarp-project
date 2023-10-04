@@ -117,8 +117,6 @@ function setAmountIn(amount: string) {
   }, []);
 
 
-
-
   const onTrade = useCallback(async (trade: TokenTrade | undefined) => {
     if (trade) {
       setIsLoading(true); // Set loading to true before executing the trade

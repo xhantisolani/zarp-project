@@ -95,7 +95,7 @@ import {
     }
   
     const options: SwapOptions = {
-      slippageTolerance: new Percent(500, 10000), // 50 bips, or 0.50%
+      slippageTolerance: new Percent(1000, 10000), // 50 bips, or 0.50%
       deadline: Math.floor(Date.now() / 1000) + 60 * 20, // 20 minutes from the current Unix time
       recipient: walletAddress,
     }
