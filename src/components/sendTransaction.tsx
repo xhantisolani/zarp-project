@@ -156,11 +156,10 @@ export function SendTransaction() {
   
     try {
       // Connect to your Ethereum provider here
-      
+
       const provider = new ethers.providers.Web3Provider(window.ethereum);
     
       const signer = provider.getSigner();
-
 
       let tx;
       if (selectedToken.name === 'Ethereum Name Service') {
@@ -178,15 +177,14 @@ export function SendTransaction() {
         tx = await signer.sendTransaction(transactionRequest)
 
         .then((tx) => {
-          openErrorModal(`Transaction hash: ${tx.hash}`);
+          setTransactionHash(tx.hash);
           return tx.wait(); // Wait for confirmation
         })
-        .then((receipt) => {
-          openErrorModal(`Transaction confirmed in block ${receipt.blockNumber}`);
-        })
+        // I removed the code that returns the block number which is something we really don't need
         .catch((error) => {
           openErrorModal(`Transaction error: ${error}`);
         });
+        
       } else {
         // Send token transaction
         const tokenContract = new ethers.Contract(
@@ -209,6 +207,7 @@ export function SendTransaction() {
       }
   
       setIsSuccess(true);
+
       setTransactionHash(tx.hash);
 
     } catch (error) {
@@ -302,16 +301,4 @@ export function SendTransaction() {
 
  export default SendTransaction;
 
-function sendTransactionViaWallet(transactionRequest: {
-  to: string; // Replace with the recipient's Ethereum address
-  value: ethers.BigNumber;
-}) {
-  throw new Error('Function not implemented.');
-}
-function sendTransactionViaExtension(transactionRequest: {
-  to: string; //  recipient's Ethereum address
-  value: ethers.BigNumber;
-}) {
-  throw new Error('Function not implemented.');
-}
 
