@@ -1,9 +1,8 @@
 import { TransactionState, getProvider, getWalletAddress, sendTransaction } from '../libs/providers';
 import { CurrentConfig, Environment } from '../config';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { createTrade, executeTrade, TokenTrade } from '../libs/trading';
 import { ERC20_ABI, Tokens } from '../libs/constants';
-import { getCurrencyBalance } from '../libs/wallet';
 import { displayTrade } from '../libs/utils';
 import styles from './swapToken.module.css';
 import Spinner from './Spinner';
@@ -41,7 +40,7 @@ const closeErrorModal = () => {
   async function fetchWalletBalance(selectedToken: Token) {
     try {
       // Connect to Ethereum provider here
-      const provider = new ethers.providers.JsonRpcProvider(CurrentConfig.rpc.mainnet);
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
 
       const address = getWalletAddress(); // user wallet address
   

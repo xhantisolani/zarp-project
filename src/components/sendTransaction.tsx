@@ -255,7 +255,7 @@ export function SendTransaction() {
         }}
         placeholder="0.00"
         value={amount}
-        disabled={!selectedToken}
+        disabled={!to}
         title={!selectedToken ? "Select Token" : ""}/>
 
       <select
