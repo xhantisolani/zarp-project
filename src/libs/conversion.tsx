@@ -1,3 +1,5 @@
+import { Token } from '@uniswap/sdk-core'
+import { ethers } from 'ethers'
 import JSBI from 'jsbi'
 
 export function fromReadableAmount(amount: number, decimals: number): JSBI {
@@ -24,4 +26,9 @@ function countDecimals(x: number) {
     return 0
   }
   return x.toString().split('.')[1].length || 0
+}
+
+export function convertAmount(amount: string, token: Token): number {
+  const amountBN = ethers.utils.parseUnits(amount, token.decimals);
+  return Number(parseFloat(ethers.utils.formatUnits(amountBN, token.decimals)));
 }
