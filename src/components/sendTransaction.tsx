@@ -6,6 +6,7 @@ import { Token } from '@uniswap/sdk-core';
 import { getWalletAddress } from '../libs/providers';
 import styles from './swapToken.module.css';
 import ErrorModal from './ErrorModal';
+import { convertAmount } from '../libs/conversion';
 
 export function SendTransaction() {
   const [to, setTo] = useState('');
@@ -80,44 +81,51 @@ export function SendTransaction() {
 
   
 
-async function getGasEstimate(token: Token, amount: string, recipientAddress: string) {
-  const provider = new ethers.providers.JsonRpcProvider(CurrentConfig.rpc.mainnet);
-  const address  = getWalletAddress()
-  
-  // Determine if the token is an ERC20 token.
-  if (token.symbol === 'ENS') {
-    // Get the estimated gas cost for sending Ethereum
-    const gasEstimate = await provider.estimateGas({
-      to: recipientAddress,
-      value:  amount,
-    });
-   
-    // Get the gas price
-    const gasPrice = await provider.getGasPrice();
-    // Calculate the total gas cost
-    const gasCost = gasEstimate.mul(gasPrice);
-    // Convert the gas cost to a string
-    const gasCostString = ethers.utils.formatEther(gasCost);
-    // Set the gas state
-    setGas(gasCostString);
-    // Return the gas cost as a string
-    return gasCostString;
-  } else {
-     // Create an instance of the ERC20 contract
-     const erc20Contract = new ethers.Contract(token.address, ERC20_ABI, provider);
-    // The token is an ERC20 token.
-    const gasEstimate = await erc20Contract.estimateGas.transfer(
-      recipientAddress, 
-      amount,
-      );
+  async function getGasEstimate(token: Token, amount: string, recipientAddress: string) {
+    const provider = new ethers.providers.JsonRpcProvider(CurrentConfig.rpc.mainnet);
+    const address  = getWalletAddress()
+    
+    // Determine if the token is an ERC20 token.
+    if (token.symbol === 'ENS') {
+      // Get the estimated gas cost for sending Ethereum
+      const gasEstimate = await provider.estimateGas({
+        to: recipientAddress,
+        value: convertAmount(amount, token),
+      });
+     
+      // Get the gas price
       const gasPrice = await provider.getGasPrice();
       // Calculate the total gas cost
       const gasCost = gasEstimate.mul(gasPrice);
+      // Convert the gas cost to a string
+      const gasCostString = ethers.utils.formatEther(gasCost);
+      // Set the gas state
+      setGas(gasCostString);
+      
+    } else {
+      try{
+       // Create an instance of the ERC20 contract
+       const erc20Contract = new ethers.Contract(token.address, ERC20_ABI, provider);
+      // The token is an ERC20 token.
+      const gasEstimate = await erc20Contract.estimateGas.transfer(
+        recipientAddress, 
+        convertAmount(amount, token),
+        );
+      // Get the gas price
+      const gasPrice = await provider.getGasPrice();
+      // Calculate the total gas cost
+      const gasCost = gasEstimate.mul(gasPrice);
+      // Convert the gas cost to a string
       const gasCostString = ethers.utils.formatEther(gasEstimate);
-
-    return setGas(gasCostString);
+  
+       setGas(gasCostString);
+      } catch (error) {
+        setGas('not enough liquidity')
+        return null; // Return null to indicate an error
+      }
+      
+    }
   }
-}
 
 
 
@@ -218,7 +226,7 @@ async function getGasEstimate(token: Token, amount: string, recipientAddress: st
           setSelectedToken(token);     
           fetchWalletBalance(token as Token)     
         }}
-      >
+      > 
         <option value="">Select Token</option>
         {tokenList.map((token) => (
            <option key={token.address} value={token.address}>
