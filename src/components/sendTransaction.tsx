@@ -3,7 +3,7 @@ import { ethers, BigNumber, BigNumberish } from 'ethers';
 import { ERC20_ABI, Tokens } from '../libs/constants';// Import the Token type from Uniswap or a similar library
 import { CurrentConfig } from '../config';
 import { Token } from '@uniswap/sdk-core';
-import { getWalletAddress } from '../libs/providers';
+import { getWalletAddress, sendTransaction } from '../libs/providers';
 import styles from './swapToken.module.css';
 import ErrorModal from './ErrorModal';
 import { convertAmount } from '../libs/conversion';
@@ -156,37 +156,61 @@ export function SendTransaction() {
   
     try {
       // Connect to your Ethereum provider here
-      const provider = new ethers.providers.JsonRpcProvider(
-        CurrentConfig.rpc.mainnet
-      );
+      
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+    
       const signer = provider.getSigner();
-  
+
+
       let tx;
       if (selectedToken.name === 'Ethereum Name Service') {
         // Send Ether transaction
+
         // Convert the amount to Wei
         const amountInWei = ethers.utils.parseEther(amount);
-  
-        tx = await signer.sendTransaction({
-          to: to,
-          value: amountInWei, // Use amountInWei instead of amount
+        const signer = provider.getSigner();
+        
+        const transactionRequest = {
+          to: to, //  recipient's Ethereum address
+          value: amountInWei, //  amount to send in Ether
+        };
+
+        tx = await signer.sendTransaction(transactionRequest)
+
+        .then((tx) => {
+          openErrorModal(`Transaction hash: ${tx.hash}`);
+          return tx.wait(); // Wait for confirmation
+        })
+        .then((receipt) => {
+          openErrorModal(`Transaction confirmed in block ${receipt.blockNumber}`);
+        })
+        .catch((error) => {
+          openErrorModal(`Transaction error: ${error}`);
         });
       } else {
         // Send token transaction
         const tokenContract = new ethers.Contract(
           selectedToken.address,
           ERC20_ABI,
-          signer
+          provider
         );
   
         // Convert the amount to the appropriate token units (e.g., wei for ERC-20 with 18 decimals)
         const amountInTokenUnits = ethers.utils.parseUnits(amount, selectedToken.decimals);
   
-        tx = await tokenContract.transfer(to, amountInTokenUnits);
+        tx = await tokenContract.transfer(to, amountInTokenUnits)
+        
+        .then((result: any) => {
+          openErrorModal(`Function result: ${result}`);
+        })
+        .catch((error: any) => {
+          openErrorModal(`Error calling function: ${error}`);
+        });
       }
   
       setIsSuccess(true);
       setTransactionHash(tx.hash);
+
     } catch (error) {
       openErrorModal('Error sending transaction:');
     } finally {
@@ -227,7 +251,8 @@ export function SendTransaction() {
         aria-label="Amount (ether)"
         onChange={(e) => {
         setAmount(e.target.value);
-        getGasEstimate(selectedToken as Token, amount, to);
+        getGasEstimate(selectedToken as Token, e.target.value, to);
+
         }}
         placeholder="0.00"
         value={amount}
@@ -259,14 +284,14 @@ export function SendTransaction() {
      
       {gas != null && (  <div className={styles.label}>Gas: {gas}</div>)}
 
-      {isSuccess && (
+      {transactionHash && (
         <div className={styles.label}>
-          Successfully sent {amount} {selectedToken?.name} {to}
+              Successfully sent {amount} {selectedToken?.name} {to}
           <div>
-            <a href={`https://etherscan.io/tx/${transactionHash}`}>Etherscan</a>
-          </div>
-        </div>
-      )}
+           <a href={`https://etherscan.io/tx/${transactionHash}`} target="_blank" rel="noopener noreferrer">  View on Etherscan </a>
+         </div>
+        </div> )}
+
        {/* Render the ErrorModal component */}
        <ErrorModal isOpen={isErrorModalOpen} onClose={closeErrorModal} error={error} />
       </div>
@@ -274,4 +299,19 @@ export function SendTransaction() {
     </>
   );
 }
+
  export default SendTransaction;
+
+function sendTransactionViaWallet(transactionRequest: {
+  to: string; // Replace with the recipient's Ethereum address
+  value: ethers.BigNumber;
+}) {
+  throw new Error('Function not implemented.');
+}
+function sendTransactionViaExtension(transactionRequest: {
+  to: string; //  recipient's Ethereum address
+  value: ethers.BigNumber;
+}) {
+  throw new Error('Function not implemented.');
+}
+
