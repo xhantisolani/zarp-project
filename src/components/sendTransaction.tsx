@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { ethers } from 'ethers';
 import { ERC20_ABI, Tokens } from '../libs/constants';// Import the Token type from Uniswap or a similar library
-import { CurrentConfig } from '../config';
-import { Token } from '@uniswap/sdk-core';
-import { getWalletAddress, sendTransaction } from '../libs/providers';
+import { Token} from '@uniswap/sdk-core';
+import { getProvider, getWalletAddress, sendTransaction } from '../libs/providers';
 import styles from './swapToken.module.css';
 import ErrorModal from './ErrorModal';
 import { convertAmount } from '../libs/conversion';
+import { getCurrencyBalance } from '../libs/wallet';
 
 export function SendTransaction() {
   const [to, setTo] = useState('');
@@ -43,50 +43,36 @@ export function SendTransaction() {
   async function fetchWalletBalance(selectedToken: Token) {
     try {
       // Connect to Ethereum provider here
-      const provider = new ethers.providers.JsonRpcProvider(CurrentConfig.rpc.mainnet);
-
-      const address = getWalletAddress(); // user wallet address
+      const provider = getProvider();
   
-      if (selectedToken.name === 'Ethereum Name Service') {
-        // Fetch ETH balance
+      if (provider) {
+        const address = getWalletAddress();
         const user = address as string;
-        const ethBalance = await provider.getBalance(user);
-
-        const ethBalanceInEther = ethers.utils.formatEther(ethBalance);
-
-        const ethBalanceInWei = ethBalanceInEther.toString(); 
-  
-        // Ensure setWalletBalance receives a BigNumber or null
-        setTokenInBalance(ethBalanceInWei.toString()); 
-      } else {
-        // Fetch the balance of the selected ERC-20 token
-        const tokenContract = new ethers.Contract(
-          selectedToken.address,
-          ERC20_ABI,
-          provider
-        );
-  
-        const balance = await tokenContract.balanceOf(address);
+        // user wallet address
         
-        const balanceAmount = ethers.utils.formatEther(balance);
-
-        setTokenInBalance(balanceAmount.toString()); // Convert the balance to a string
+        setTokenInBalance(await getCurrencyBalance(provider, user, selectedToken));
+        // Convert the balance to a string
+      } else {
+        // Handle the case where getProvider() returns null
+        openErrorModal('Error connecting to Ethereum provider');
       }
     } catch (error) {
       openErrorModal('Error fetching wallet balance');
-      return null; // Return null to indicate an error
+      return; // Return null to indicate an error
     }
   }
+  
 
   
 
   async function getGasEstimate(token: Token, amount: string, recipientAddress: string) {
-    const provider = new ethers.providers.JsonRpcProvider(CurrentConfig.rpc.mainnet);
+    const provider = getProvider();
+    
    if (!isValidEthereumAddress(recipientAddress))
    {
     openErrorModal('Enter valid Recipient Address ');
    }
-
+   if (provider) {
     // Determine if the token is an ERC20 token.
     if (token.symbol === 'ENS') {
       try {
@@ -138,6 +124,10 @@ export function SendTransaction() {
       }
       
     }
+  } else {
+    // Handle the case where getProvider() returns null
+    openErrorModal('Error connecting to Ethereum provider');
+  }
   }
 
 
@@ -168,8 +158,7 @@ export function SendTransaction() {
 
       const provider = new ethers.providers.Web3Provider(window.ethereum);
     
-      const signer = provider.getSigner();
-
+      
       let tx;
       if (selectedToken.name === 'Ethereum Name Service') {
         // Send Ether transaction
@@ -182,7 +171,7 @@ export function SendTransaction() {
           to: to, //  recipient's Ethereum address
           value: amountInWei, //  amount to send in Ether
         };
-
+                 
         tx = await signer.sendTransaction(transactionRequest)
 
         .then((tx) => {
@@ -262,7 +251,7 @@ export function SendTransaction() {
         getGasEstimate(selectedToken as Token, e.target.value, to);}}
         placeholder="0.00"
         value={amount}
-        disabled={!isValidEthereumAddress(to)}
+        disabled={!isValidEthereumAddress(to) || !selectedToken}
         title={!isValidEthereumAddress(to) ? "Enter valid address" : ""}/>
 
  

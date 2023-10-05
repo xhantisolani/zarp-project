@@ -9,6 +9,7 @@ import Spinner from './Spinner';
 import { Token } from '@uniswap/sdk-core';
 import { ethers } from 'ethers';
 import ErrorModal from './ErrorModal';
+import { getCurrencyBalance } from '../libs/wallet';
 //comment test 
 // xhanti comment
 export function SwapTokens() {
@@ -37,43 +38,28 @@ const closeErrorModal = () => {
   setIsErrorModalOpen(false);
 };
 
-  async function fetchWalletBalance(selectedToken: Token) {
-    try {
-      // Connect to Ethereum provider here
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
+ // Load the wallet balance for the selected token
+ async function fetchWalletBalance(selectedToken: Token) {
+  try {
+    // Connect to Ethereum provider here
+    const provider = getProvider();
 
-      const address = getWalletAddress(); // user wallet address
-  
-      if (selectedToken.name === 'Ethereum Name Service') {
-        // Fetch ETH balance
-        const user = address as string;
-        const ethBalance = await provider.getBalance(user);
-
-        const ethBalanceInEther = ethers.utils.formatEther(ethBalance);
-
-        const ethBalanceInWei = ethBalanceInEther.toString(); 
-  
-        // Ensure setWalletBalance receives a BigNumber or null
-        setTokenInBalance(ethBalanceInWei.toString()); 
-      } else {
-        // Fetch the balance of the selected ERC-20 token
-        const tokenContract = new ethers.Contract(
-          selectedToken.address,
-          ERC20_ABI,
-          provider
-        );
-  
-        const balance = await tokenContract.balanceOf(address);
-        
-        const balanceAmount = ethers.utils.formatEther(balance);
-
-        setTokenInBalance( balanceAmount.toString()); // Convert the balance to a string
-      }
-    } catch (error) {
-      openErrorModal('Error fetching wallet balance');
-      return null; // Return null to indicate an error
+    if (provider) {
+      const address = getWalletAddress();
+      const user = address as string;
+      // user wallet address
+      
+      setTokenInBalance(await getCurrencyBalance(provider, user, selectedToken));
+      // Convert the balance to a string
+    } else {
+      // Handle the case where getProvider() returns null
+      openErrorModal('Error connecting to Ethereum provider');
     }
+  } catch (error) {
+    openErrorModal('Error fetching wallet balance');
+    return; // Return null to indicate an error
   }
+}
 
   function setTokenIn(token: Token) {
     try {
@@ -157,6 +143,7 @@ return (
           value={passedAmount}
           onChange={(e) => {
             const inputValue = e.target.value;
+           
             if (!isNaN(Number(inputValue))) {
               setAmountIn(inputValue)
               onCreateTrade();
@@ -192,7 +179,8 @@ return (
         placeholder={'0.00'}
         name={"displaySecondToken"}
         value={trade ? ` ${displayTrade(trade)}` : ''}
-        disabled />
+        disabled 
+       />
         
         <select
         value={selectedTokenOut ? selectedTokenOut.address : ''}
@@ -213,19 +201,22 @@ return (
       </select>
     </div>
     <button
-    className={styles.button}
-      onClick={() => {
-        onTrade(trade);
-      }}
-      disabled={
-        trade === undefined ||
-        txState === TransactionState.Sending ||
-        getProvider() === null ||
-        CurrentConfig.rpc.mainnet === ''
+  className={styles.button}
+  onClick={() => {
+    onTrade(trade);
+  }}
+  disabled={
+      trade === undefined ||
+      !selectedTokenIn ||
+      txState === TransactionState.Sending ||
+      getProvider() === null ||
+      CurrentConfig.rpc.mainnet === ''
       }
-    >
-      Swap
-    </button>
+       title="Select Tokens"
+       >
+         Swap
+      </button>
+
      {isLoading && <Spinner />}
      {/* Render the ErrorModal component */}
       <ErrorModal isOpen={isErrorModalOpen} onClose={closeErrorModal} error={error} />

@@ -1,6 +1,6 @@
 // This file contains code to easily connect to and get information from a wallet on chain
 
-import { Currency } from '@uniswap/sdk-core'
+import {  Token } from '@uniswap/sdk-core'
 import { BigNumber, ethers } from 'ethers'
 import { providers } from 'ethers'
 import JSBI from 'jsbi'
@@ -18,10 +18,10 @@ import { toReadableAmount } from './utils'
 export async function getCurrencyBalance(
   provider: providers.Provider,
   address: string,
-  currency: Currency
+  currency: Token
 ): Promise<string> {
   // Handle ETH directly
-  if (currency.isNative) {
+  if (currency.symbol== 'ENS') {
     return ethers.utils.formatEther(await provider.getBalance(address))
   }
 

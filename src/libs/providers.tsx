@@ -108,7 +108,7 @@ function createBrowserExtensionProvider(): ethers.providers.Web3Provider | null 
 }
 
 // Transacting with a wallet extension via a Web3 Provider
-async function sendTransactionViaExtension(
+export async function sendTransactionViaExtension(
   transaction: ethers.providers.TransactionRequest
 ): Promise<TransactionState> {
   try {

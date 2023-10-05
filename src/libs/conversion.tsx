@@ -30,5 +30,6 @@ function countDecimals(x: number) {
 
 export function convertAmount(amount: string, token: Token): number {
   const amountBN = ethers.utils.parseUnits(amount, token.decimals);
-  return Number(parseFloat(ethers.utils.formatUnits(amountBN, token.decimals)));
+  return parseFloat(ethers.utils.formatUnits(amountBN, token.decimals));
 }
+

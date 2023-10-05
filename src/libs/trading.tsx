@@ -122,8 +122,6 @@ import {
     }
     return TransactionState.Sent;
     
-    return res;
-    
   }
   
   // Helper Quoting and Pool Functions
@@ -189,4 +187,3 @@ import {
       return TransactionState.Failed
     }
   }
-  
