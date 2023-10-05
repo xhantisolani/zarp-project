@@ -144,13 +144,19 @@ export function SendTransaction() {
   const handleSendTransaction = async () => {
     if (!isValidEthereumAddress(to) || !selectedToken || !tokenInBalance) {
       openErrorModal('Invalid input or token selection');
-      return;
+      return; // Exit the function here
     }
   
-    if (Number(amount) > Number(tokenInBalance)) {
+    // This condition checks if amount is less than or equal to 0 or if it's greater than the balance.
+    // If either condition is true, it will trigger the "Invalid amount or insufficient balance" error.
+    if (Number(amount) <= 0) {
+      openErrorModal('Amount must be greater than 0');
+      return; // Exit the function here
+    } else if (Number(amount) > Number(tokenInBalance)) {
       openErrorModal('Insufficient balance');
-      return;
+      return; // Exit the function here
     }
+    
   
     setIsLoading(true);
   
@@ -257,7 +263,7 @@ export function SendTransaction() {
         value={amount}
         disabled={!to}
         title={!selectedToken ? "Select Token" : ""}/>
-
+ 
       <select
         value={selectedToken ? selectedToken.address : ''}
         onChange={(e) => {
