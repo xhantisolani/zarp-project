@@ -16,7 +16,7 @@ export const WETH_CONTRACT_ADDRESS =
 // Currencies and Tokens
 
 export const WETH_TOKEN = new Token(
-  SUPPORTED_CHAINS[0],
+  SUPPORTED_CHAINS[7],
   '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
   18,
   'WETH',
@@ -24,29 +24,29 @@ export const WETH_TOKEN = new Token(
 )
 
 export const USDC_TOKEN = new Token(
-  SUPPORTED_CHAINS[0],
+  SUPPORTED_CHAINS[7],
   '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', 
   6,
   'USDC',
   'USDC'
 )
 export const ZARP_TOKEN = new Token(
-  SUPPORTED_CHAINS[0],
+  SUPPORTED_CHAINS[7],
   '0xb755506531786C8aC63B756BaB1ac387bACB0C04',
   18,
   'ZARP',
   'ZARP Stablecoin'
 )
 export const ENS_TOKEN = new Token(
-  SUPPORTED_CHAINS[0],
+  SUPPORTED_CHAINS[7],
   '0xC18360217D8F7Ab5e7c516566761Ea12Ce7F9D72',
   18,
   'ENS',
   'Ethereum Name Service'
 )
 export const GOERLI_TOKEN = new Token(
-  SUPPORTED_CHAINS[0],
-  '0xdD69DB25F6D620A7baD3023c5d32761D353D3De9',
+  SUPPORTED_CHAINS[7],
+  '0xF054dFDc34065B0730E5A0F4f1dd53e0E8499D03',
   18,
   'GOERLI',
   'Goerli ETH'

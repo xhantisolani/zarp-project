@@ -31,7 +31,7 @@ export interface ExampleConfig {
 }
 // Example Configuration
 export const CurrentConfig: ExampleConfig = {
-  env: Environment.MAINNET,
+  env: Environment.WALLET_EXTENSION,
   rpc: {
     local: 'http://localhost:8545',
     mainnet: 'https://goerli.infura.io/v3/1d3f75d0dc7d49ada554948c3ec20f60',

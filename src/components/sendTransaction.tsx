@@ -284,7 +284,7 @@ export function SendTransaction() {
         <div className={styles.label}>
               Successfully sent {amount} {selectedToken?.name} {to}
           <div>
-           <a href={`https://etherscan.io/tx/${transactionHash}`} target="_blank" rel="noopener noreferrer">  View on Etherscan </a>
+           <a href={`https://goerli.etherscan.io/tx/${transactionHash}`} target="_blank" rel="noopener noreferrer">  View on Etherscan </a>
          </div>
         </div> )}
 
