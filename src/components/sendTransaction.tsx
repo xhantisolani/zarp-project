@@ -260,13 +260,12 @@ export function SendTransaction() {
         aria-label="Amount (ether)"
         onChange={(e) => {
         setAmount(e.target.value);
-        getGasEstimate(selectedToken as Token, e.target.value, to);
-
-        }}
+        getGasEstimate(selectedToken as Token, e.target.value, to);}}
         placeholder="0.00"
         value={amount}
-        disabled={ !isValidEthereumAddress(to)}
-        title={!selectedToken ? "Select Token" : ""}/>
+        disabled={!isValidEthereumAddress(to)}
+        title={!isValidEthereumAddress(to) ? "Enter valid address" : ""}/>
+
  
       <select
         value={selectedToken ? selectedToken.address : ''}
