@@ -48,13 +48,13 @@ export function getMainnetProvider(): BaseProvider {
 }
 
 export function getProvider(): providers.Provider | null {
-  return CurrentConfig.env === Environment.MAINNET
+  return CurrentConfig.env === Environment.WALLET_EXTENSION
     ? browserExtensionProvider
     : wallet.provider
 }
 
 export function getWalletAddress(): string | null {
-  return CurrentConfig.env === Environment.MAINNET
+  return CurrentConfig.env === Environment.WALLET_EXTENSION
     ? walletExtensionAddress
     : wallet.address
 }
@@ -62,7 +62,7 @@ export function getWalletAddress(): string | null {
 export async function sendTransaction(
   transaction: ethers.providers.TransactionRequest
 ): Promise<TransactionState> {
-  if (CurrentConfig.env === Environment.MAINNET) {
+  if (CurrentConfig.env === Environment.WALLET_EXTENSION) {
     return sendTransactionViaExtension(transaction)
   } else {
     if (transaction.value) {
@@ -92,7 +92,7 @@ export async function connectBrowserExtensionWallet() {
 // Internal Functionality
 function createWallet(): ethers.Wallet {
   let provider = mainnetProvider
-  if (CurrentConfig.env === Environment.MAINNET) {
+  if (CurrentConfig.env === Environment.WALLET_EXTENSION) {
     provider = new ethers.providers.JsonRpcProvider(CurrentConfig.rpc.mainnet)
   }
   return new ethers.Wallet(CurrentConfig.wallet.privateKey, provider)
