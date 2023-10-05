@@ -83,7 +83,11 @@ export function SendTransaction() {
 
   async function getGasEstimate(token: Token, amount: string, recipientAddress: string) {
     const provider = new ethers.providers.JsonRpcProvider(CurrentConfig.rpc.mainnet);
-    
+   if (!isValidEthereumAddress(recipientAddress))
+   {
+    openErrorModal('Enter valid Recipient Address ');
+   }
+
     // Determine if the token is an ERC20 token.
     if (token.symbol === 'ENS') {
       try {
@@ -109,7 +113,7 @@ export function SendTransaction() {
         setGas(gasCostString);
       } catch (error) {
         openErrorModal('Recipient Address not valid');
-        return null; // Return null to indicate an error
+        return; // Return null to indicate an error
       }
     }
      else {
@@ -131,7 +135,7 @@ export function SendTransaction() {
        setGas(gasCostString);
       } catch (error) {
         setGas('not enough liquidity')
-        return null; // Return null to indicate an error
+        return; // Return null to indicate an error
       }
       
     }
