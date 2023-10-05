@@ -11,7 +11,6 @@ export const disconnectWallet = async () => {
       // Call the `disconnect` method to disconnect the wallet
       await window.ethereum.disconnect();
       // After disconnecting, you can update your UI or state to reflect that the wallet is disconnected.
-      // For example, set a state variable to null or update a connected status indicator.
     } catch (error) {
       // Handle any errors that occur during disconnection
       console.error("Error disconnecting wallet:", error);

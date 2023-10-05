@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { ethers, BigNumber, BigNumberish } from 'ethers';
+import { useState } from 'react';
+import { ethers } from 'ethers';
 import { ERC20_ABI, Tokens } from '../libs/constants';// Import the Token type from Uniswap or a similar library
 import { CurrentConfig } from '../config';
 import { Token } from '@uniswap/sdk-core';
@@ -19,7 +19,6 @@ export function SendTransaction() {
   const tokenList = Tokens;
   const [error, setError] = useState<string | null>(null); // State for storing error messages
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
-  const ERC20 = require("@uniswap/sdk-core").ERC20;
   const [tokenInBalance, setTokenInBalance] = useState<string>()
   
   // Ethereum address regex pattern
