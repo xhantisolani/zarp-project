@@ -265,7 +265,7 @@ export function SendTransaction() {
         }}
         placeholder="0.00"
         value={amount}
-        disabled={!to}
+        disabled={ !isValidEthereumAddress(to)}
         title={!selectedToken ? "Select Token" : ""}/>
  
       <select
