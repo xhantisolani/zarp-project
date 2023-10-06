@@ -20,12 +20,12 @@ export async function swapTokens(trade: TokenTrade, amount: string): Promise<eth
       }
     
       // Give approval to the router to spend the token
-    const tokenApproval = await getTokenTransferApproval(trade.)
+   // const tokenApproval = await getTokenTransferApproval(trade.)
     
     const uniswapRouter = new ethers.Contract(SWAP_ROUTER_ADDRESS, IUniswapV3PoolABI.abi, provider);
   
     // Define the swap path (token addresses)
-    const path = [tokenIn, tokenOut];
+    //const path = [tokenIn, tokenOut];
   
     // Minimum amount of output tokens you want to receive
     const amountOutMin = 0;
@@ -37,7 +37,7 @@ export async function swapTokens(trade: TokenTrade, amount: string): Promise<eth
     const transactionRequest: ethers.providers.TransactionRequest = {
       to: SWAP_ROUTER_ADDRESS,
       value: 0, // Amount of Ether (in wei) to send with the transaction, 0 for token swaps
-      data: uniswapRouter.interface.encodeFunctionData('swapExactTokensForTokens', [amountIn, amountOutMin, path, provider.getSigner().getAddress(), deadline]),
+     // data: uniswapRouter.interface.encodeFunctionData('swapExactTokensForTokens', [amountIn, amountOutMin, path, provider.getSigner().getAddress(), deadline]),
     };
   
     return transactionRequest;
