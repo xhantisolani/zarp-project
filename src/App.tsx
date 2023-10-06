@@ -12,7 +12,6 @@ function App() {
         <Routes>
           <Route path="/swaptokens" element={<SwapTokens />} />
           <Route path="/transfertokens" element={<SendTransaction />} />
-          {/* Add a default route to navigate to /swaptokens */}
           <Route path="/" element={<Navigate to="/swaptokens" />} />
         </Routes>
       </div>

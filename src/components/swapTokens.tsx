@@ -7,7 +7,6 @@ import { displayTrade } from '../libs/utils';
 import styles from './swapToken.module.css';
 import Spinner from './Spinner';
 import { Token } from '@uniswap/sdk-core';
-import { ethers } from 'ethers';
 import ErrorModal from './ErrorModal';
 import { getCurrencyBalance } from '../libs/wallet';
 //comment test 
