@@ -28,9 +28,9 @@ function countDecimals(x: number) {
   return x.toString().split('.')[1].length || 0
 }
 // function to convert the passed amount to its equavilent decimals
-export function convertAmount(amount: string, token: Token): string {
+export function convertAmount(amount: string, token: Token): ethers.BigNumber {
   const amountBN = ethers.utils.parseUnits(amount, token.decimals);
-  return amountBN.toString();
+  return amountBN;
 }
 /*export function convertAmount(amount: string, token: Token): string {
   const amountBN = ethers.utils.parseUnits(amount, token.decimals);
