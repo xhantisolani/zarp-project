@@ -210,8 +210,38 @@ export const ERC20_ABI =[
       "payable": false,
       "stateMutability": "nonpayable",
       "type": "function"
-    }
-  
+    },
+      {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "amountOutMin",
+            "type": "uint256"
+          },
+          {
+            "name": "path",
+            "type": "address[]"
+          },
+          {
+            "name": "to",
+            "type": "address"
+          },
+          {
+            "name": "deadline",
+            "type": "uint256"
+          }
+        ],
+        "name": "swapExactTokensForTokens",
+        "outputs": [
+          {
+            "name": "amounts",
+            "type": "uint256[]"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
   
 ]
 
@@ -350,40 +380,7 @@ export const WETH_ABI = [
     ],
     "name": "Transfer",
     "type": "event"
-  },
-    {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "amountOutMin",
-          "type": "uint256"
-        },
-        {
-          "name": "path",
-          "type": "address[]"
-        },
-        {
-          "name": "to",
-          "type": "address"
-        },
-        {
-          "name": "deadline",
-          "type": "uint256"
-        }
-      ],
-      "name": "swapExactTokensForTokens",
-      "outputs": [
-        {
-          "name": "amounts",
-          "type": "uint256[]"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    }
-  
-  
+  }
 ]
 
 
@@ -391,4 +388,4 @@ export const WETH_ABI = [
 export const Tokens = [USDC_TOKEN, WETH_TOKEN, ZARP_TOKEN, ENS_TOKEN, GOERLI_TOKEN ];
 export const MAX_FEE_PER_GAS = 100000000000
 export const MAX_PRIORITY_FEE_PER_GAS = 100000000000
-export const TOKEN_AMOUNT_TO_APPROVE_FOR_TRANSFER = 20000000
+export const TOKEN_AMOUNT_TO_APPROVE_FOR_TRANSFER = 20
