@@ -211,37 +211,43 @@ export const ERC20_ABI =[
       "stateMutability": "nonpayable",
       "type": "function"
     },
+     
+  // Uniswap V3 swapExactTokensForTokens function
+  {
+    "constant": false,
+    "inputs": [
       {
-        "constant": false,
-        "inputs": [
-          {
-            "name": "amountOutMin",
-            "type": "uint256"
-          },
-          {
-            "name": "path",
-            "type": "address[]"
-          },
-          {
-            "name": "to",
-            "type": "address"
-          },
-          {
-            "name": "deadline",
-            "type": "uint256"
-          }
-        ],
-        "name": "swapExactTokensForTokens",
-        "outputs": [
-          {
-            "name": "amounts",
-            "type": "uint256[]"
-          }
-        ],
-        "payable": false,
-        "stateMutability": "nonpayable",
-        "type": "function"
+        "name": "amountIn",
+        "type": "uint256"
+      },
+      {
+        "name": "amountOutMin",
+        "type": "uint256"
+      },
+      {
+        "name": "path",
+        "type": "address[]"
+      },
+      {
+        "name": "to",
+        "type": "address"
+      },
+      {
+        "name": "deadline",
+        "type": "uint256"
       }
+    ],
+    "name": "swapExactTokensForTokens",
+    "outputs": [
+      {
+        "name": "amounts",
+        "type": "uint256[]"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
   
 ]
 
@@ -386,6 +392,9 @@ export const WETH_ABI = [
 
 // Transactions
 export const Tokens = [USDC_TOKEN, WETH_TOKEN, ZARP_TOKEN, ENS_TOKEN, GOERLI_TOKEN ];
-export const MAX_FEE_PER_GAS = 100000000000
-export const MAX_PRIORITY_FEE_PER_GAS = 100000000000
-export const TOKEN_AMOUNT_TO_APPROVE_FOR_TRANSFER = 20
+// Gas fee values as strings in wei
+export const MAX_FEE_PER_GAS = "100000000000"; // 100 gwei
+export const MAX_PRIORITY_FEE_PER_GAS = "100000000000"; // 100 gwei
+
+// Amount of tokens to approve for transfer
+export const TOKEN_AMOUNT_TO_APPROVE_FOR_TRANSFER = "2000"; // 20 tokens
