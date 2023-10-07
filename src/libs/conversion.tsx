@@ -34,6 +34,9 @@ export function convertAmount(amount: string, token: Token): string {
 }
 /*export function convertAmount(amount: string, token: Token): string {
   const amountBN = ethers.utils.parseUnits(amount, token.decimals);
-  return amountBN.toString();
+
+   const passedAmount =parseFloat(ethers.utils.formatUnits(amountBN, token.decimals));
+   return passedAmount.toString();
+}
 }
 */
