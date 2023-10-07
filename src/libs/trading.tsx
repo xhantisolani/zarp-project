@@ -87,13 +87,13 @@ import {
     }
   
     // Give approval to the router to spend the token
-    /*const tokenApproval = await getTokenTransferApproval(CurrentConfig.tokens.in)
+    const tokenApproval = await getTokenTransferApproval(CurrentConfig.tokens.in)
   
     // Fail if transfer approvals do not go through
     if (tokenApproval !== TransactionState.Sent) {
       return TransactionState.Failed
     }
-  */
+  
     const options: SwapOptions = {
       slippageTolerance: new Percent(500, 10000), // 50 bips, or 0.50%
       deadline: Math.floor(Date.now() / 1000) + 60 * 20, // 20 minutes from the current Unix time
@@ -124,8 +124,7 @@ import {
     
   }
   
-  // Helper Quoting and Pool Functions
-  
+  // Helper Quoting and Pool Functions  
   async function getOutputQuote(route: Route<Currency, Currency>) {
     const provider = getProvider()
   
