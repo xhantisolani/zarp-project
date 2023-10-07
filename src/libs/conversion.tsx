@@ -28,8 +28,10 @@ function countDecimals(x: number) {
   return x.toString().split('.')[1].length || 0
 }
 
-export function convertAmount(amount: string, token: Token): number {
+export function convertAmount(amount: string, token: Token): string {
   const amountBN = ethers.utils.parseUnits(amount, token.decimals);
-  return parseFloat(ethers.utils.formatUnits(amountBN, token.decimals));
+
+   const passedAmount =parseFloat(ethers.utils.formatUnits(amountBN, token.decimals));
+   return passedAmount.toString();
 }
 

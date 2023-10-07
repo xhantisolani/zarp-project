@@ -108,7 +108,7 @@ export function SendTransaction() {
       // The token is an ERC20 token.
       const gasEstimate = await erc20Contract.estimateGas.transfer(
         recipientAddress, 
-        convertAmount(amount, token),
+       amount,
         );
       // Get the gas price
       const gasPrice = await provider.getGasPrice();
@@ -119,7 +119,7 @@ export function SendTransaction() {
   
        setGas(gasCostString);
       } catch (error) {
-        setGas('not enough liquidity')
+        setGas(`not enough liquidity${error}`)
         return; // Return null to indicate an error
       }
       
