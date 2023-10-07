@@ -108,7 +108,7 @@ export function SendTransaction() {
       // The token is an ERC20 token.
       const gasEstimate = await erc20Contract.estimateGas.transfer(
         recipientAddress, 
-       amount,
+        convertAmount(amount, token),
         );
       // Get the gas price
       const gasPrice = await provider.getGasPrice();
