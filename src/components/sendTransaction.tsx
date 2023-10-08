@@ -196,7 +196,7 @@ export function SendTransaction() {
   
       setTransactionHash(tx.hash);
     } catch (error) {
-      openErrorModal(`Error sending transaction`);
+      openErrorModal(`Transaction Failed`);
     } finally {
       setIsLoading(false);
     }
@@ -223,7 +223,8 @@ export function SendTransaction() {
       <input
         className={styles.formControl}
         aria-label="Recipient"
-        onChange={(e) => setTo(e.target.value)}
+        onChange={(e) => {setTo(e.target.value);
+        setTransactionHash('');}}
         placeholder="0xA0Cf…251e"
         value={to}
       />
@@ -235,9 +236,11 @@ export function SendTransaction() {
         aria-label="Amount (ether)"
         onChange={(e) => {
         setAmount(e.target.value);
+        setTransactionHash('');
         getGasEstimate(selectedToken as Token, e.target.value, to);}}
         placeholder="0.00"
         value={amount}
+        type="number" // Set the input type to "number"
         disabled={!isValidEthereumAddress(to) || !selectedToken}
         title={!isValidEthereumAddress(to) ? "Enter valid address" : ""}/>
 
@@ -269,7 +272,8 @@ export function SendTransaction() {
 
       {transactionHash && (
         <div className={styles.label}>
-              Successfully sent {amount} {selectedToken?.name} {to}
+              Successfully sent {amount} {selectedToken?.name} to Address:
+              <div>{to} </div>
           <div>
            <a href={`https://goerli.etherscan.io/tx/${transactionHash}`} target="_blank" rel="noopener noreferrer">  View on Etherscan </a>
          </div>
