@@ -2,7 +2,7 @@ import { TransactionState, getProvider, getWalletAddress, sendTransaction } from
 import { CurrentConfig, Environment } from '../config';
 import { useCallback, useState } from 'react';
 import { createTrade, executeTrade, TokenTrade } from '../libs/trading';
-import { ERC20_ABI, Tokens } from '../libs/constants';
+import { Tokens } from '../libs/constants';
 import { displayTrade } from '../libs/utils';
 import styles from './swapToken.module.css';
 import Spinner from './Spinner';

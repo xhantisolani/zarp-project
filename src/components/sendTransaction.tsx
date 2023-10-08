@@ -5,8 +5,8 @@ import { Token} from '@uniswap/sdk-core';
 import { getProvider, getWalletAddress, sendTransaction } from '../libs/providers';
 import styles from './swapToken.module.css';
 import ErrorModal from './ErrorModal';
-import { convertAmount } from '../libs/conversion';
 import { getCurrencyBalance } from '../libs/wallet';
+import Spinner from './Spinner';
 
 export function SendTransaction() {
   const [to, setTo] = useState('');
@@ -197,6 +197,7 @@ export function SendTransaction() {
       setIsSuccess(true);
   
       setTransactionHash(tx.hash);
+      setIsLoading(false);
     } catch (error) {
       openErrorModal(`Transaction Failed`);
     } finally {
@@ -280,7 +281,7 @@ export function SendTransaction() {
            <a href={`https://goerli.etherscan.io/tx/${transactionHash}`} target="_blank" rel="noopener noreferrer">  View on Etherscan </a>
          </div>
         </div> )}
-
+        {isLoading && <Spinner />}
        {/* Render the ErrorModal component */}
        <ErrorModal isOpen={isErrorModalOpen} onClose={closeErrorModal} error={error} />
       </div>
