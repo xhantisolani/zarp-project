@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { ethers } from 'ethers';
-import { ERC20_ABI, Tokens } from '../libs/constants';// Import the Token type from Uniswap or a similar library
 import { Token} from '@uniswap/sdk-core';
 import { getProvider, getWalletAddress, sendTransaction } from '../libs/providers';
 import styles from './swapToken.module.css';
 import ErrorModal from './ErrorModal';
 import { convertAmount } from '../libs/conversion';
 import { getCurrencyBalance } from '../libs/wallet';
+import { ERC20_ABI, Tokens, ZARP_ABI } from '../libs/constants';
+
+
 
 export function SendTransaction() {
   const [to, setTo] = useState('');
@@ -178,9 +180,10 @@ export function SendTransaction() {
         // Send token transaction
         const tokenContract = new ethers.Contract(
           selectedToken.address,
-          ERC20_ABI,
+          selectedToken.symbol === 'ZARP' ? ZARP_ABI as unknown as ethers.utils.Fragment[] : ERC20_ABI,
           signer
         );
+        
   
         // Convert the amount to the appropriate token units (e.g., wei for ERC-20 with 18 decimals)
         const amountInTokenUnits = ethers.utils.parseUnits(
