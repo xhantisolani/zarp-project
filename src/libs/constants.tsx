@@ -546,8 +546,8 @@ export const WETH_ABI = [
 // Transactions
 export const Tokens = [USDC_TOKEN, WETH_TOKEN, ZARP_TOKEN, ENS_TOKEN ];
 // Gas fee values as strings in wei
-export const MAX_FEE_PER_GAS = 100000000000; // 100 gwei
-export const MAX_PRIORITY_FEE_PER_GAS = 100000000000; // 100 gwei
+export const MAX_FEE_PER_GAS = '100000000000'; // 100 gwei
+export const MAX_PRIORITY_FEE_PER_GAS = '100000000000'; // 100 gwei
 
 // Amount of tokens to approve for transfer
-export const TOKEN_AMOUNT_TO_APPROVE_FOR_TRANSFER = 2000; // 2000 tokens
+export const TOKEN_AMOUNT_TO_APPROVE_FOR_TRANSFER = '2000'; // 2000 tokens
