@@ -196,7 +196,7 @@ export function SendTransaction() {
   
       setTransactionHash(tx.hash);
     } catch (error) {
-      openErrorModal(`Error sending transaction: ${error}`);
+      openErrorModal(`Error sending transaction`);
     } finally {
       setIsLoading(false);
     }
