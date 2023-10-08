@@ -43,7 +43,7 @@ export const ENS_TOKEN = new Token(
   SUPPORTED_CHAINS[7],
   '0xC18360217D8F7Ab5e7c516566761Ea12Ce7F9D72',
   18,
-  'ENS',
+  'ethereum',
   'Ethereum Name Service'
 )
 

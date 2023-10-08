@@ -21,8 +21,10 @@ export async function getCurrencyBalance(
   currency: Token
 ): Promise<string> {
   // Handle ETH directly
-  if (currency.symbol== 'ENS') {
-    return ethers.utils.formatEther(await provider.getBalance(address))
+  if (currency.symbol== 'ethereum') {
+    const formattedBalance = ethers.utils.formatEther(await provider.getBalance(address))
+    const roundedBalance = parseFloat(formattedBalance).toFixed(2)
+    return roundedBalance;
   }
 
   // Get currency otherwise
@@ -33,11 +35,13 @@ export async function getCurrencyBalance(
   )
   const balance: number = await ERC20Contract.balanceOf(address)
   const decimals: number = await ERC20Contract.decimals()
-
+  const tx = toReadableAmount(balance, decimals)
+  const roundedBalance = parseFloat(tx).toFixed(2)
   // Format with proper units (approximate)
-  return toReadableAmount(balance, decimals)
+  return roundedBalance;
 }
 
+  
   
 
 // wraps ETH (rounding up to the nearest ETH for decimal places)

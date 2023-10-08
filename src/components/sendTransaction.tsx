@@ -132,8 +132,6 @@ export function SendTransaction() {
   }
 
 
-
-
   const handleSendTransaction = async () => {
     if (!isValidEthereumAddress(to) || !selectedToken || !tokenInBalance) {
       openErrorModal('Invalid input or token selection');
@@ -160,7 +158,7 @@ export function SendTransaction() {
       const signer = provider.getSigner();
   
       let tx;
-      if (selectedToken.name === 'Ethereum Name Service') {
+      if (selectedToken.symbol === 'ethereun') {
         // Send Ether transaction
   
         // Convert the amount to Wei
