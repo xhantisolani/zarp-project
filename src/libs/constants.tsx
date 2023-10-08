@@ -16,7 +16,8 @@ export const WETH_CONTRACT_ADDRESS =
 // Currencies and Tokens
 export const WETH_TOKEN = new Token(
   SUPPORTED_CHAINS[7],
-  '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
+  '0xb4fbf271143f4fbf7b91a5ded31805e42b2208d6',
+  // goerli address
   18,
   'WETH',
   'Wrapped Ether'
@@ -40,7 +41,7 @@ export const ENS_TOKEN = new Token(
   SUPPORTED_CHAINS[7],
   '0xC18360217D8F7Ab5e7c516566761Ea12Ce7F9D72',
   18,
-  'ENS',
+  'ethereum',
   'Ethereum Name Service'
 )
 export const GOERLI_TOKEN = new Token(
