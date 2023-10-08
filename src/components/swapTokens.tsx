@@ -56,7 +56,7 @@ const closeErrorModal = () => {
     }
   } catch (error) {
     openErrorModal('Error fetching wallet balance');
-    return setTokenInBalance('0'); // Return null to indicate an error
+    return; // Return null to indicate an error
   }
 }
 
@@ -107,11 +107,10 @@ function setAmountIn(amount: string) {
     if (trade) {
       setIsLoading(true); // Set loading to true before executing the trade
   
-      try {     
-           
+      try {        
         setTxState(await executeTrade(trade));
       } catch (error) {
-        openErrorModal(`cannot execute trade ${error} not found.`);
+        openErrorModal(`Token with address ${error} not found.`);
         // Handle the error as needed
       } finally {
         setIsLoading(false); // Set loading to false when the trade operation completes
@@ -130,7 +129,7 @@ return (
     <div>
 
       <div className={styles.body}>
-        {CurrentConfig.env === Environment.WALLET_EXTENSION && getProvider() === null && (
+        {CurrentConfig.env === Environment.MAINNET && getProvider() === null && (
           <h2 className="error">Please install a wallet to use this example configuration   </h2>)}
       </div>
 
@@ -228,4 +227,3 @@ return (
 }
 // Export the swapTokens function
 export default SwapTokens;
-
