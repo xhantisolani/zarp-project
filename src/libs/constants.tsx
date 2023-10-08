@@ -37,12 +37,12 @@ export const ZARP_TOKEN = new Token(
   'ZARP',
   'ZARP Stablecoin'
 )
-export const ETH_TOKEN = new Token(
+export const ENS_TOKEN = new Token(
   SUPPORTED_CHAINS[7],
   '0xC18360217D8F7Ab5e7c516566761Ea12Ce7F9D72',
   18,
   'ETH',
-  'Ethereum'
+  'Ethereum Name Service'
 )
 
 // ABI's
@@ -544,7 +544,7 @@ export const WETH_ABI = [
 
 
 // Transactions
-export const Tokens = [USDC_TOKEN, WETH_TOKEN, ZARP_TOKEN, ETH_TOKEN ];
+export const Tokens = [USDC_TOKEN, WETH_TOKEN, ZARP_TOKEN, ENS_TOKEN ];
 // Gas fee values as strings in wei
 export const MAX_FEE_PER_GAS = 100000000000; // 100 gwei
 export const MAX_PRIORITY_FEE_PER_GAS = 100000000000; // 100 gwei

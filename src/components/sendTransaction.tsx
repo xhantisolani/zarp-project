@@ -161,7 +161,7 @@ export function SendTransaction() {
       const signer = provider.getSigner();
         
       let tx;
-      if (selectedToken.name === 'Ethereum') {
+      if (selectedToken.name === 'Ethereum Name Service') {
         // Send Ether transaction
 
         // Convert the amount to Wei
