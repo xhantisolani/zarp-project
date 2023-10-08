@@ -66,8 +66,8 @@ export function SendTransaction() {
   
 
   async function getGasEstimate(token: Token, amount: string, recipientAddress: string) {
-    const provider = getProvider();
-    
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
    if (!isValidEthereumAddress(recipientAddress))
    {
     openErrorModal('Enter valid Recipient Address ');
@@ -82,7 +82,7 @@ export function SendTransaction() {
         // Get the estimated gas cost for sending Ethereum
         const gasEstimate = await provider.estimateGas({
           to: recipientAddress,
-          value: amountInWei,
+          value: amountInWei
         });
     
         // Get the gas price
@@ -109,6 +109,7 @@ export function SendTransaction() {
       const gasEstimate = await erc20Contract.estimateGas.transfer(
         recipientAddress, 
         convertAmount(amount, token),
+        signer
         );
       // Get the gas price
       const gasPrice = await provider.getGasPrice();
