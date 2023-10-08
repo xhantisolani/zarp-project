@@ -133,14 +133,13 @@ export function SendTransaction() {
 
 
 
-
   const handleSendTransaction = async () => {
     if (!isValidEthereumAddress(to) || !selectedToken || !tokenInBalance) {
       openErrorModal('Invalid input or token selection');
       return; // Exit the function here
     }
   
-    // This condition checks if amount is less than or equal to 0 or if it's greater than the balance.
+    // This condition checks if the amount is less than or equal to 0 or if it's greater than the balance.
     // If either condition is true, it will trigger the "Invalid amount or insufficient balance" error.
     if (Number(amount) <= 0) {
       openErrorModal('Amount must be greater than 0');
@@ -149,40 +148,31 @@ export function SendTransaction() {
       openErrorModal('Insufficient balance');
       return; // Exit the function here
     }
-    
   
     setIsLoading(true);
   
     try {
       // Connect to your Ethereum provider here
-
+  
       const provider = new ethers.providers.Web3Provider(window.ethereum);
-    
+  
       const signer = provider.getSigner();
-        
+  
       let tx;
       if (selectedToken.name === 'Ethereum Name Service') {
         // Send Ether transaction
-
+  
         // Convert the amount to Wei
         const amountInWei = ethers.utils.parseEther(amount);
-        
+  
         const transactionRequest = {
-          to: to, //  recipient's Ethereum address
-          value: amountInWei, //  amount to send in Ether
+          to: to, // recipient's Ethereum address
+          value: amountInWei, // amount to send in Ether
         };
-                 
-        tx = await signer.sendTransaction(transactionRequest)
-
-        .then((tx) => {
-          setTransactionHash(tx.hash);
-          return tx.wait(); // Wait for confirmation
-        })
-        // I removed the code that returns the block number which is something we really don't need
-        .catch((error) => {
-          openErrorModal(`Transaction error: ${error}`);
-        });
-        
+  
+        tx = await signer.sendTransaction(transactionRequest);
+        await tx.wait(); // Wait for confirmation
+  
       } else {
         // Send token transaction
         const tokenContract = new ethers.Contract(
@@ -192,24 +182,20 @@ export function SendTransaction() {
         );
   
         // Convert the amount to the appropriate token units (e.g., wei for ERC-20 with 18 decimals)
-        const amountInTokenUnits = ethers.utils.parseUnits(amount, selectedToken.decimals);
+        const amountInTokenUnits = ethers.utils.parseUnits(
+          amount,
+          selectedToken.decimals
+        );
   
-        tx = await tokenContract.transfer(to, amountInTokenUnits)
-        
-        .then((result: any) => {
-          openErrorModal(`Function result: ${result}`);
-        })
-        .catch((error: any) => {
-          openErrorModal(`Error calling function: ${error}`);
-        });
+        tx = await tokenContract.transfer(to, amountInTokenUnits);
+        await tx.wait(); // Wait for confirmation
       }
   
       setIsSuccess(true);
-
-      await setTransactionHash(tx.hash);
-
+  
+      setTransactionHash(tx.hash);
     } catch (error) {
-      openErrorModal('Error sending transaction:');
+      openErrorModal(`Error sending transaction: ${error}`);
     } finally {
       setIsLoading(false);
     }
