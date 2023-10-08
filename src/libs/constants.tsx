@@ -17,7 +17,7 @@ export const WETH_CONTRACT_ADDRESS =
 export const WETH_TOKEN = new Token(
   SUPPORTED_CHAINS[7],
   // WETH address on goerli
-  '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6',
+  '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6', // goerli Eth token
   18,
   'WETH',
   'Wrapped Ether'
@@ -182,6 +182,164 @@ export const ERC20_ABI =[
     "name": "Transfer",
     "type": "event"
   },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "name",
+      "outputs": [
+        {
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "symbol",
+      "outputs": [
+        {
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "decimals",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint8"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "name": "value",
+          "type": "uint256"
+        }
+      ],
+      "name": "transfer",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "owner",
+          "type": "address"
+        },
+        {
+          "name": "spender",
+          "type": "address"
+        }
+      ],
+      "name": "allowance",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "owner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "name": "spender",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "value",
+          "type": "uint256"
+        }
+      ],
+      "name": "Approval",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "from",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "value",
+          "type": "uint256"
+        }
+      ],
+      "name": "Transfer",
+      "type": "event"
+    },
+  
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_to",
+          "type": "address"
+        },
+        {
+          "name": "_value",
+          "type": "uint256"
+        }
+      ],
+      "name": "transfer",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+  
+  
   // I added this abi for the transfer approval of tokens
     {
       "constant": false,
@@ -388,8 +546,8 @@ export const WETH_ABI = [
 // Transactions
 export const Tokens = [USDC_TOKEN, WETH_TOKEN, ZARP_TOKEN, ENS_TOKEN ];
 // Gas fee values as strings in wei
-export const MAX_FEE_PER_GAS = "100000000000"; // 100 gwei
-export const MAX_PRIORITY_FEE_PER_GAS = "100000000000"; // 100 gwei
+export const MAX_FEE_PER_GAS = 100000000000; // 100 gwei
+export const MAX_PRIORITY_FEE_PER_GAS = 100000000000; // 100 gwei
 
 // Amount of tokens to approve for transfer
-export const TOKEN_AMOUNT_TO_APPROVE_FOR_TRANSFER = "2000"; // 20 tokens
+export const TOKEN_AMOUNT_TO_APPROVE_FOR_TRANSFER = 2000; // 2000 tokens

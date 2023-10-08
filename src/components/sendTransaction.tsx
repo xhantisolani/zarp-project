@@ -58,7 +58,6 @@ export function SendTransaction() {
       }
     } catch (error) {
       openErrorModal('Error fetching wallet balance');
-      setTokenInBalance('');
       return; // Return null to indicate an error
     }
   }
@@ -120,7 +119,7 @@ export function SendTransaction() {
   
        setGas(gasCostString);
       } catch (error) {
-        setGas(`not enough liquidity${error}`)
+        setGas('not enough liquidity')
         return; // Return null to indicate an error
       }
       
@@ -159,14 +158,14 @@ export function SendTransaction() {
 
       const provider = new ethers.providers.Web3Provider(window.ethereum);
     
-      
+      const signer = provider.getSigner();
+        
       let tx;
       if (selectedToken.name === 'Ethereum Name Service') {
         // Send Ether transaction
 
         // Convert the amount to Wei
         const amountInWei = ethers.utils.parseEther(amount);
-        const signer = provider.getSigner();
         
         const transactionRequest = {
           to: to, //  recipient's Ethereum address
@@ -189,7 +188,7 @@ export function SendTransaction() {
         const tokenContract = new ethers.Contract(
           selectedToken.address,
           ERC20_ABI,
-          provider
+          signer
         );
   
         // Convert the amount to the appropriate token units (e.g., wei for ERC-20 with 18 decimals)
@@ -207,7 +206,7 @@ export function SendTransaction() {
   
       setIsSuccess(true);
 
-      setTransactionHash(tx.hash);
+      await setTransactionHash(tx.hash);
 
     } catch (error) {
       openErrorModal('Error sending transaction:');
@@ -298,5 +297,4 @@ export function SendTransaction() {
 }
 
  export default SendTransaction;
-
 
