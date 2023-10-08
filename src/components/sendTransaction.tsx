@@ -183,10 +183,7 @@ export function SendTransaction() {
         );
   
         // Convert the amount to the appropriate token units (e.g., wei for ERC-20 with 18 decimals)
-        const amountInTokenUnits = ethers.utils.parseUnits(
-          amount,
-          selectedToken.decimals
-        );
+        const amountInTokenUnits = convertAmount(amount,selectedToken);
   
         tx = await tokenContract.transfer(to, amountInTokenUnits);
         await tx.wait(); // Wait for confirmation
