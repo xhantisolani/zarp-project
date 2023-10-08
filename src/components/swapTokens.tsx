@@ -113,7 +113,7 @@ function setAmountIn(amount: string) {
         openErrorModal(`Token with address ${error} not found.`);
         // Handle the error as needed
       } finally {
-       
+        setTxState(TransactionState.Rejected);
         setIsLoading(false); // Set loading to false when the trade operation completes
       }
     }
