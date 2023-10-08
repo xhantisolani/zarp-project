@@ -28,7 +28,17 @@ function countDecimals(x: number) {
   return x.toString().split('.')[1].length || 0
 }
 
-export function convertAmount(amount: string, token: Token): number {
+
+/*/ function to convert the passed amount to its equavilent decimals
+export function convertAmount(amount: string, token: Token): ethers.BigNumber {
   const amountBN = ethers.utils.parseUnits(amount, token.decimals);
-  return Number(parseFloat(ethers.utils.formatUnits(amountBN, token.decimals)));
+  return amountBN;
+}
+
+*/
+export function convertAmount(amount: string, token: Token): string {
+  const amountBN = ethers.utils.parseUnits(amount, token.decimals);
+
+   const passedAmount =parseFloat(ethers.utils.formatUnits(amountBN, token.decimals));
+   return passedAmount.toString();
 }

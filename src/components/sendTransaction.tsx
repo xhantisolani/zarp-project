@@ -1,12 +1,12 @@
-import { useState, useEffect } from 'react';
-import { ethers, BigNumber, BigNumberish } from 'ethers';
+import { useState } from 'react';
+import { ethers } from 'ethers';
 import { ERC20_ABI, Tokens } from '../libs/constants';// Import the Token type from Uniswap or a similar library
-import { CurrentConfig } from '../config';
-import { Token } from '@uniswap/sdk-core';
-import { getWalletAddress, sendTransaction } from '../libs/providers';
+import { Token} from '@uniswap/sdk-core';
+import { getProvider, getWalletAddress, sendTransaction } from '../libs/providers';
 import styles from './swapToken.module.css';
 import ErrorModal from './ErrorModal';
 import { convertAmount } from '../libs/conversion';
+import { getCurrencyBalance } from '../libs/wallet';
 
 export function SendTransaction() {
   const [to, setTo] = useState('');
@@ -19,7 +19,6 @@ export function SendTransaction() {
   const tokenList = Tokens;
   const [error, setError] = useState<string | null>(null); // State for storing error messages
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
-  const ERC20 = require("@uniswap/sdk-core").ERC20;
   const [tokenInBalance, setTokenInBalance] = useState<string>()
   
   // Ethereum address regex pattern
@@ -44,46 +43,36 @@ export function SendTransaction() {
   async function fetchWalletBalance(selectedToken: Token) {
     try {
       // Connect to Ethereum provider here
-      const provider = new ethers.providers.JsonRpcProvider(CurrentConfig.rpc.mainnet);
-
-      const address = getWalletAddress(); // user wallet address
+      const provider = getProvider();
   
-      if (selectedToken.name === 'Ethereum Name Service') {
-        // Fetch ETH balance
+      if (provider) {
+        const address = getWalletAddress();
         const user = address as string;
-        const ethBalance = await provider.getBalance(user);
-
-        const ethBalanceInEther = ethers.utils.formatEther(ethBalance);
-
-        const ethBalanceInWei = ethBalanceInEther.toString(); 
-  
-        // Ensure setWalletBalance receives a BigNumber or null
-        setTokenInBalance(ethBalanceInWei.toString()); 
-      } else {
-        // Fetch the balance of the selected ERC-20 token
-        const tokenContract = new ethers.Contract(
-          selectedToken.address,
-          ERC20_ABI,
-          provider
-        );
-  
-        const balance = await tokenContract.balanceOf(address);
+        // user wallet address
         
-        const balanceAmount = ethers.utils.formatEther(balance);
-
-        setTokenInBalance(balanceAmount.toString()); // Convert the balance to a string
+        setTokenInBalance(await getCurrencyBalance(provider, user, selectedToken));
+        // Convert the balance to a string
+      } else {
+        // Handle the case where getProvider() returns null
+        openErrorModal('Error connecting to Ethereum provider');
       }
     } catch (error) {
       openErrorModal('Error fetching wallet balance');
-      return null; // Return null to indicate an error
+      return; // Return null to indicate an error
     }
   }
+  
 
   
 
   async function getGasEstimate(token: Token, amount: string, recipientAddress: string) {
-    const provider = new ethers.providers.JsonRpcProvider(CurrentConfig.rpc.mainnet);
-    
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+   if (!isValidEthereumAddress(recipientAddress))
+   {
+    openErrorModal('Enter valid Recipient Address ');
+   }
+   if (provider) {
     // Determine if the token is an ERC20 token.
     if (token.symbol === 'ENS') {
       try {
@@ -93,7 +82,7 @@ export function SendTransaction() {
         // Get the estimated gas cost for sending Ethereum
         const gasEstimate = await provider.estimateGas({
           to: recipientAddress,
-          value: amountInWei,
+          value: amountInWei
         });
     
         // Get the gas price
@@ -109,7 +98,7 @@ export function SendTransaction() {
         setGas(gasCostString);
       } catch (error) {
         openErrorModal('Recipient Address not valid');
-        return null; // Return null to indicate an error
+        return; // Return null to indicate an error
       }
     }
      else {
@@ -119,7 +108,8 @@ export function SendTransaction() {
       // The token is an ERC20 token.
       const gasEstimate = await erc20Contract.estimateGas.transfer(
         recipientAddress, 
-        convertAmount(amount, token),
+        amount, token.decimals,
+        signer
         );
       // Get the gas price
       const gasPrice = await provider.getGasPrice();
@@ -131,12 +121,15 @@ export function SendTransaction() {
        setGas(gasCostString);
       } catch (error) {
         setGas('not enough liquidity')
-        return null; // Return null to indicate an error
+        return; // Return null to indicate an error
       }
       
     }
+  } else {
+    // Handle the case where getProvider() returns null
+    openErrorModal('Error connecting to Ethereum provider');
   }
-
+  }
 
 
 
@@ -144,75 +137,66 @@ export function SendTransaction() {
   const handleSendTransaction = async () => {
     if (!isValidEthereumAddress(to) || !selectedToken || !tokenInBalance) {
       openErrorModal('Invalid input or token selection');
-      return;
+      return; // Exit the function here
     }
   
-    if (Number(amount) > Number(tokenInBalance)) {
+    // This condition checks if the amount is less than or equal to 0 or if it's greater than the balance.
+    // If either condition is true, it will trigger the "Invalid amount or insufficient balance" error.
+    if (Number(amount) <= 0) {
+      openErrorModal('Amount must be greater than 0');
+      return; // Exit the function here
+    } else if (Number(amount) > Number(tokenInBalance)) {
       openErrorModal('Insufficient balance');
-      return;
+      return; // Exit the function here
     }
   
     setIsLoading(true);
   
     try {
       // Connect to your Ethereum provider here
-      
+  
       const provider = new ethers.providers.Web3Provider(window.ethereum);
-    
+  
       const signer = provider.getSigner();
-
-
+  
       let tx;
       if (selectedToken.name === 'Ethereum Name Service') {
         // Send Ether transaction
-
+  
         // Convert the amount to Wei
         const amountInWei = ethers.utils.parseEther(amount);
-        const signer = provider.getSigner();
-        
+  
         const transactionRequest = {
-          to: to, //  recipient's Ethereum address
-          value: amountInWei, //  amount to send in Ether
+          to: to, // recipient's Ethereum address
+          value: amountInWei, // amount to send in Ether
         };
-
-        tx = await signer.sendTransaction(transactionRequest)
-
-        .then((tx) => {
-          openErrorModal(`Transaction hash: ${tx.hash}`);
-          return tx.wait(); // Wait for confirmation
-        })
-        .then((receipt) => {
-          openErrorModal(`Transaction confirmed in block ${receipt.blockNumber}`);
-        })
-        .catch((error) => {
-          openErrorModal(`Transaction error: ${error}`);
-        });
+  
+        tx = await signer.sendTransaction(transactionRequest);
+        await tx.wait(); // Wait for confirmation
+  
       } else {
         // Send token transaction
         const tokenContract = new ethers.Contract(
           selectedToken.address,
           ERC20_ABI,
-          provider
+          signer
         );
   
         // Convert the amount to the appropriate token units (e.g., wei for ERC-20 with 18 decimals)
-        const amountInTokenUnits = ethers.utils.parseUnits(amount, selectedToken.decimals);
+        const amountInTokenUnits = ethers.utils.parseUnits(
+          amount,
+          selectedToken.decimals
+        );
   
-        tx = await tokenContract.transfer(to, amountInTokenUnits)
-        
-        .then((result: any) => {
-          openErrorModal(`Function result: ${result}`);
-        })
-        .catch((error: any) => {
-          openErrorModal(`Error calling function: ${error}`);
-        });
+        tx = await tokenContract.transfer(to, amountInTokenUnits);
+        await tx.wait(); // Wait for confirmation
       }
   
       setIsSuccess(true);
+  
       setTransactionHash(tx.hash);
-
     } catch (error) {
-      openErrorModal('Error sending transaction:');
+      openErrorModal(`Error sending transaction: ${error}`);
     } finally {
       setIsLoading(false);
     }
@@ -251,14 +235,13 @@ export function SendTransaction() {
         aria-label="Amount (ether)"
         onChange={(e) => {
         setAmount(e.target.value);
-        getGasEstimate(selectedToken as Token, e.target.value, to);
-
-        }}
+        getGasEstimate(selectedToken as Token, e.target.value, to);}}
         placeholder="0.00"
         value={amount}
-        disabled={!selectedToken}
-        title={!selectedToken ? "Select Token" : ""}/>
+        disabled={!isValidEthereumAddress(to) || !selectedToken}
+        title={!isValidEthereumAddress(to) ? "Enter valid address" : ""}/>
 
+ 
       <select
         value={selectedToken ? selectedToken.address : ''}
         onChange={(e) => {
@@ -288,7 +271,7 @@ export function SendTransaction() {
         <div className={styles.label}>
               Successfully sent {amount} {selectedToken?.name} {to}
           <div>
-           <a href={`https://etherscan.io/tx/${transactionHash}`} target="_blank" rel="noopener noreferrer">  View on Etherscan </a>
+           <a href={`https://goerli.etherscan.io/tx/${transactionHash}`} target="_blank" rel="noopener noreferrer">  View on Etherscan </a>
          </div>
         </div> )}
 
@@ -301,17 +284,4 @@ export function SendTransaction() {
 }
 
  export default SendTransaction;
-
-function sendTransactionViaWallet(transactionRequest: {
-  to: string; // Replace with the recipient's Ethereum address
-  value: ethers.BigNumber;
-}) {
-  throw new Error('Function not implemented.');
-}
-function sendTransactionViaExtension(transactionRequest: {
-  to: string; //  recipient's Ethereum address
-  value: ethers.BigNumber;
-}) {
-  throw new Error('Function not implemented.');
-}
 

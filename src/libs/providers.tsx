@@ -11,7 +11,6 @@ export const disconnectWallet = async () => {
       // Call the `disconnect` method to disconnect the wallet
       await window.ethereum.disconnect();
       // After disconnecting, you can update your UI or state to reflect that the wallet is disconnected.
-      // For example, set a state variable to null or update a connected status indicator.
     } catch (error) {
       // Handle any errors that occur during disconnection
       console.error("Error disconnecting wallet:", error);
@@ -49,13 +48,13 @@ export function getMainnetProvider(): BaseProvider {
 }
 
 export function getProvider(): providers.Provider | null {
-  return CurrentConfig.env === Environment.MAINNET
+  return CurrentConfig.env === Environment.WALLET_EXTENSION
     ? browserExtensionProvider
     : wallet.provider
 }
 
 export function getWalletAddress(): string | null {
-  return CurrentConfig.env === Environment.MAINNET
+  return CurrentConfig.env === Environment.WALLET_EXTENSION
     ? walletExtensionAddress
     : wallet.address
 }
@@ -63,7 +62,7 @@ export function getWalletAddress(): string | null {
 export async function sendTransaction(
   transaction: ethers.providers.TransactionRequest
 ): Promise<TransactionState> {
-  if (CurrentConfig.env === Environment.MAINNET) {
+  if (CurrentConfig.env === Environment.WALLET_EXTENSION) {
     return sendTransactionViaExtension(transaction)
   } else {
     if (transaction.value) {
@@ -93,7 +92,7 @@ export async function connectBrowserExtensionWallet() {
 // Internal Functionality
 function createWallet(): ethers.Wallet {
   let provider = mainnetProvider
-  if (CurrentConfig.env === Environment.MAINNET) {
+  if (CurrentConfig.env === Environment.WALLET_EXTENSION) {
     provider = new ethers.providers.JsonRpcProvider(CurrentConfig.rpc.mainnet)
   }
   return new ethers.Wallet(CurrentConfig.wallet.privateKey, provider)
@@ -109,7 +108,7 @@ function createBrowserExtensionProvider(): ethers.providers.Web3Provider | null 
 }
 
 // Transacting with a wallet extension via a Web3 Provider
-async function sendTransactionViaExtension(
+export async function sendTransactionViaExtension(
   transaction: ethers.providers.TransactionRequest
 ): Promise<TransactionState> {
   try {
