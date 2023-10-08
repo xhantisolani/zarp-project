@@ -16,8 +16,8 @@ export const WETH_CONTRACT_ADDRESS =
 // Currencies and Tokens
 export const WETH_TOKEN = new Token(
   SUPPORTED_CHAINS[7],
-  '0xb4fbf271143f4fbf7b91a5ded31805e42b2208d6',
-  // goerli address
+  // WETH address on goerli
+  '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6',
   18,
   'WETH',
   'Wrapped Ether'
@@ -41,16 +41,10 @@ export const ENS_TOKEN = new Token(
   SUPPORTED_CHAINS[7],
   '0xC18360217D8F7Ab5e7c516566761Ea12Ce7F9D72',
   18,
-  'ethereum',
+  'ENS',
   'Ethereum Name Service'
 )
-export const GOERLI_TOKEN = new Token(
-  SUPPORTED_CHAINS[7],
-  '0xF054dFDc34065B0730E5A0F4f1dd53e0E8499D03',
-  18,
-  'GOERLI',
-  'Goerli ETH'
-)
+
 // ABI's
 
 export const ERC20_ABI =[
@@ -392,7 +386,7 @@ export const WETH_ABI = [
 
 
 // Transactions
-export const Tokens = [USDC_TOKEN, WETH_TOKEN, ZARP_TOKEN, ENS_TOKEN, GOERLI_TOKEN ];
+export const Tokens = [USDC_TOKEN, WETH_TOKEN, ZARP_TOKEN, ENS_TOKEN ];
 // Gas fee values as strings in wei
 export const MAX_FEE_PER_GAS = "100000000000"; // 100 gwei
 export const MAX_PRIORITY_FEE_PER_GAS = "100000000000"; // 100 gwei

@@ -58,6 +58,7 @@ export function SendTransaction() {
       }
     } catch (error) {
       openErrorModal('Error fetching wallet balance');
+      setTokenInBalance('');
       return; // Return null to indicate an error
     }
   }
