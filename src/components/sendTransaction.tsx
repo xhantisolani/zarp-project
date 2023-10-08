@@ -108,7 +108,7 @@ export function SendTransaction() {
       // The token is an ERC20 token.
       const gasEstimate = await erc20Contract.estimateGas.transfer(
         recipientAddress, 
-        convertAmount(amount, token),
+        amount, token.decimals,
         signer
         );
       // Get the gas price
@@ -183,7 +183,10 @@ export function SendTransaction() {
         );
   
         // Convert the amount to the appropriate token units (e.g., wei for ERC-20 with 18 decimals)
-        const amountInTokenUnits = convertAmount(amount,selectedToken);
+        const amountInTokenUnits = ethers.utils.parseUnits(
+          amount,
+          selectedToken.decimals
+        );
   
         tx = await tokenContract.transfer(to, amountInTokenUnits);
         await tx.wait(); // Wait for confirmation
