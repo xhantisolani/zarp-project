@@ -58,7 +58,6 @@ export function SendTransaction() {
       }
     } catch (error) {
       openErrorModal('Error fetching wallet balance');
-      setTokenInBalance('');
       return; // Return null to indicate an error
     }
   }
@@ -69,68 +68,46 @@ export function SendTransaction() {
   async function getGasEstimate(token: Token, amount: string, recipientAddress: string) {
     const provider = getProvider();
     
-   if (!isValidEthereumAddress(recipientAddress))
-   {
-    openErrorModal('Enter valid Recipient Address ');
-   }
-   if (provider) {
-    // Determine if the token is an ERC20 token.
-    if (token.symbol === 'ENS') {
-      try {
-        // Convert the amount to Wei
-        const amountInWei = ethers.utils.parseEther(amount);
+    if (!provider) {
+      openErrorModal('Error connecting to Ethereum provider');
+      return;
+    }
     
-        // Get the estimated gas cost for sending Ethereum
+    if (!isValidEthereumAddress(recipientAddress)) {
+      openErrorModal('Enter a valid Recipient Address');
+      return;
+    }
+  
+    // For sending Ether
+    if (token.symbol === 'ENS') { // NOTE: Change 'ENS' to a more suitable identifier for Ethereum
+      try {
+        const amountInWei = ethers.utils.parseEther(amount);
         const gasEstimate = await provider.estimateGas({
           to: recipientAddress,
           value: amountInWei,
         });
-    
-        // Get the gas price
         const gasPrice = await provider.getGasPrice();
-        
-        // Calculate the total gas cost
         const gasCost = gasEstimate.mul(gasPrice);
-    
-        // Convert the gas cost to a string
-        const gasCostString = ethers.utils.formatEther(gasCost);
-    
-        // Set the gas state
-        setGas(gasCostString);
+        setGas(ethers.utils.formatEther(gasCost));
       } catch (error) {
-        openErrorModal('Recipient Address not valid');
-        return; // Return null to indicate an error
+        openErrorModal('Error estimating gas for Ethereum transfer');
       }
+      return;
     }
-     else {
-      try{
-       // Create an instance of the ERC20 contract
-       const erc20Contract = new ethers.Contract(token.address, ERC20_ABI, provider);
-      // The token is an ERC20 token.
-      const gasEstimate = await erc20Contract.estimateGas.transfer(
-        recipientAddress, 
-        convertAmount(amount, token),
-        );
-      // Get the gas price
-      const gasPrice = await provider.getGasPrice();
-      // Calculate the total gas cost
-      const gasCost = gasEstimate.mul(gasPrice);
-      // Convert the gas cost to a string
-      const gasCostString = ethers.utils.formatEther(gasEstimate);
   
-       setGas(gasCostString);
-      } catch (error) {
-        setGas(`not enough liquidity${error}`)
-        return; // Return null to indicate an error
-      }
-      
+    // For sending ERC20 tokens
+    try {
+      const erc20Contract = new ethers.Contract(token.address, ERC20_ABI, provider);
+      const amountInTokenUnits = convertAmount(amount, token); // Assuming this function returns in token's smallest unit
+      const gasEstimate = await erc20Contract.estimateGas.transfer(recipientAddress, amountInTokenUnits);
+      const gasPrice = await provider.getGasPrice();
+      const gasCost = gasEstimate.mul(gasPrice);
+      setGas(ethers.utils.formatEther(gasCost));
+    } catch (error) {
+      openErrorModal('Error estimating gas for token transfer');
     }
-  } else {
-    // Handle the case where getProvider() returns null
-    openErrorModal('Error connecting to Ethereum provider');
   }
-  }
-
+  
 
 
 
