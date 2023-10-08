@@ -13,9 +13,9 @@ export const SWAP_ROUTER_ADDRESS = '0xE592427A0AEce92De3Edee1F18E0157C05861564'
 // 0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45 v3 swapRouter
 //0x82aF49447D8a07e3bd95BD0d56f35241523fBab1
 export const WETH_CONTRACT_ADDRESS =
-  '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
+  '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6'   // mainnet address  '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
 
-// Currencies and Tokens
+// Currencies and Tokensss
 export const WETH_TOKEN = new Token(
   SUPPORTED_CHAINS[7],
   // WETH address on goerli
@@ -548,8 +548,8 @@ export const WETH_ABI = [
 // Transactions
 export const Tokens = [USDC_TOKEN, WETH_TOKEN, ZARP_TOKEN, ENS_TOKEN ];
 // Gas fee values as strings in wei
-export const MAX_FEE_PER_GAS = '100000000'; // 100 gwei
-export const MAX_PRIORITY_FEE_PER_GAS = '100000000'; // 100 gwei
+export const MAX_FEE_PER_GAS = '4000000000'; // 4 gwei
+export const MAX_PRIORITY_FEE_PER_GAS = '100000000'; // 1 gwei
 
 // Amount of tokens to approve for transfer
 export const TOKEN_AMOUNT_TO_APPROVE_FOR_TRANSFER = '2000'; // 2000 tokens
