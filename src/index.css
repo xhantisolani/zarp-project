@@ -14,10 +14,12 @@
 
 body {
   margin: 0;
+  background-image: url('');
   background-color: var(--primary-background-color);
   color-scheme: dark;
   font-family: sans-serif;
   color: var(--primary-font-color);
+  background-size: cover;
 }
 #heading {
   color: #ffe400;
