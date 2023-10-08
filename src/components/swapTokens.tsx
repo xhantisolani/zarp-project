@@ -134,7 +134,7 @@ return (
           <h2 className="error">Please install a wallet to use this example configuration   </h2>)}
       </div>
 
-      <p  className={styles.label}>Balance: {tokenInBalance}  {selectedTokenIn?.symbol}  *Transaction State: {txState }</p>
+      <p  className={styles.label}>Balance: {tokenInBalance}  {selectedTokenIn?.symbol}  Transaction State: {txState }</p>
       <div className={styles.formGroup}>
         <input
           className={styles.formControl}
