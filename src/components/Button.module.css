@@ -5,7 +5,7 @@
     background-color: var(--accent-color-to);
     border: none;
     border-radius: 0.25rem;
-    
+    color: var(--primary-background-color);
   }
   
   .button:hover {
