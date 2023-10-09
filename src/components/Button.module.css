@@ -5,12 +5,13 @@
     background-color: var(--accent-color-to);
     border: none;
     border-radius: 0.25rem;
-    
+    color: #32323e;
   }
   
   .button:hover {
-    filter: brightness(0.8);
+    filter: brightness(1.1);
     cursor: pointer;
+    transform: scale(1.01)
   }
   
   .button:disabled {

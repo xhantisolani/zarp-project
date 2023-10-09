@@ -89,7 +89,7 @@ export function SendTransaction() {
       }
 
       // Determine if the token is an ERC20 token.
-      if (token.symbol === "ENS") {
+      if (token.symbol === "ETH") {
         // Convert the amount to Wei
         const amountInWei = ethers.utils.parseEther(amount);
 
@@ -157,10 +157,7 @@ export function SendTransaction() {
 
     // This condition checks if the amount is less than or equal to 0 or if it's greater than the balance.
     // If either condition is true, it will trigger the "Invalid amount or insufficient balance" error.
-    if (Number(amount) <= 0) {
-      openErrorModal("Amount must be greater than 0");
-      return; // Exit the function here
-    } else if (Number(amount) > Number(tokenInBalance)) {
+    if (Number(amount) > Number(tokenInBalance)) {
       openErrorModal("Insufficient balance");
       return; // Exit the function here
     }
@@ -175,7 +172,7 @@ export function SendTransaction() {
       const signer = provider.getSigner();
 
       let tx;
-      if (selectedToken.symbol === "ethereun") {
+      if (selectedToken.symbol === "ETH") {
         // Send Ether transaction
 
         // Convert the amount to Wei
