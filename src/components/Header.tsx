@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   getWalletAddress,
   connectBrowserExtensionWallet,
   disconnectWallet,
-} from '../libs/providers'; // Replace 'YourWalletUtils' with the actual path to your file
-import { NavLink } from 'react-router-dom';
-import Button from './Button';
-import styles from './Header.module.css';
+} from "../libs/providers";
+import { NavLink } from "react-router-dom";
+import Button from "./Button";
+import styles from "./Header.module.css";
 
 const Header = () => {
   const [address, setAddress] = useState<string | null>(null);
@@ -30,7 +30,7 @@ const Header = () => {
         setAddress(connectedAddress);
       }
     } catch (error) {
-      console.error('Error connecting wallet:', error);
+      console.error("Error connecting wallet:", error);
     }
   };
 
@@ -39,7 +39,7 @@ const Header = () => {
       await disconnectWallet();
       setAddress(null); // Update the UI to show "Connect wallet" after disconnection
     } catch (error) {
-      console.error('Error disconnecting wallet:', error);
+      console.error("Error disconnecting wallet:", error);
     }
   };
 
@@ -53,7 +53,10 @@ const Header = () => {
         <div className={styles.connected}>
           <div className={styles.connectContainer}>
             <p className={styles.connectBtn}>
-            Connected to: {address.length > 10 ? `${address.slice(0, 5)}...${address.slice(-4)}` : address}
+              Connected to:{" "}
+              {address.length > 10
+                ? `${address.slice(0, 4)}...${address.slice(-3)}`
+                : address}
             </p>
             <Button onClick={handleDisconnect}>Disconnect</Button>
           </div>
@@ -63,6 +66,5 @@ const Header = () => {
       )}
     </header>
   );
-  
-}
+};
 export default Header;

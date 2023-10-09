@@ -1,0 +1,41 @@
+.appContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    background-color: #2D373C; /* Dark green color from your image */
+    overflow: hidden;
+  }
+  
+  .triangle {
+    width: 0;
+    border-style: solid;
+    position: absolute;
+  }
+  
+  /* Define each triangle separately with colors and positions */
+  .triangle.yellow {
+    border-width: 50vw 50vw 0 0;
+    border-color: #FDE74C transparent transparent transparent;
+    top: 0;
+    left: 0;
+  }
+  
+  .triangle.green {
+    border-width: 50vw 0 0 50vw;
+    border-color: #9BC53D transparent transparent transparent;
+    top: 0;
+    right: 0;
+  }
+  
+  @media (max-width: 768px) {
+    /* Adjust triangle sizes for responsiveness on smaller screens */
+    .triangle.yellow {
+      border-width: 60vw 60vw 0 0;
+    }
+    .triangle.green {
+      border-width: 60vw 0 0 60vw;
+    }
+  }
+  

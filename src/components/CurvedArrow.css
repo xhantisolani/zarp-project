@@ -1,0 +1,26 @@
+/* CurvedArrow.css */
+.curvedArrow {
+    width: 50px;
+    height: 50px;
+    background-image: ('../src/curvedArrow.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    cursor: pointer;
+  }
+  
+  .curvedArrow:hover {
+    animation: bounce 1.0s infinite;
+  }
+  
+  @keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+      transform: rotate(45deg) translateY(0);
+    }
+    40% {
+      transform: rotate(45deg) translateY(-10px);
+    }
+    60% {
+      transform: rotate(45deg) translateY(-5px);
+    }
+  }
+  

@@ -1,0 +1,79 @@
+.ScreenBack{
+    background-color: #ffffff;
+    position: fixed;
+    top: 0;
+    left:0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: 100%;
+    position: fixed;
+    z-index: -1;
+  }
+  
+  .ScreenBack .div {
+    background-color: #ffffff;
+    height: 832px;
+    overflow: hidden;
+    position: relative;
+    width: 1280px;
+  }
+  
+  .ScreenBack .rectangle {
+    background-color: #04493d;
+    height: 832px;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 1280px;
+  }
+  
+  .ScreenBack .rectangle-2 {
+    background-color: #ffe400;
+    border-radius: 32px;
+    height: 80vh;
+    left: -20vw;
+    position: absolute;
+    top: -40vh;
+    transform: rotate(-44.84deg);
+    width: 41vw;
+  }
+  
+  
+  .ScreenBack .rectangle-3 {
+    background-color: #159a36;
+    border-radius: 35px;
+    height: 70vh;
+    left: 87vw;
+    position: absolute;
+    top: -15vh;
+    transform: rotate(-35deg);
+    width: 31vw;
+  }
+  
+  .ScreenBack .rectangle-4 {
+    background-color: #ffe400;
+    border-radius: 32px;
+    height: 80vh;
+    left: 80vw;
+    position: absolute;
+    top: 60vh;
+    transform: rotate(-140deg);
+    width: 390px;
+  }
+  .ScreenBack .rectangle-5 {
+    background-color: #159a36;
+    border-radius: 35px;
+    height: 90vh;
+    left: -7vw;
+    position: absolute;
+    top: 45vh;
+    transform: rotate(-35deg);
+    width: 31vw;
+  }
+  
+  
+
+  

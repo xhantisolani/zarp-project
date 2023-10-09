@@ -1,5 +1,4 @@
 .header {
-  background-color: var(--primary-background-color);
   padding: 0.5rem 2rem;
   display: flex;
   justify-content: space-between; /* Align items at both ends (left and right) */
@@ -11,6 +10,18 @@
   padding: 0.5rem 1rem;
   font-weight: bold;
   letter-spacing: 0.05em;
+  color: #32323e;
+  background-color: var(--accent-color-to);
+  border: none;
+  border-radius: 0.25rem;
+  margin-right: 0.5rem; /* Add margin to separate buttons */
+}
+
+.disconnectBtn {
+  padding: 0.5rem 1rem;
+  font-weight: bold;
+  letter-spacing: 0.05em;
+  color: #32323e;
   background-color: var(--accent-color-to);
   border: none;
   border-radius: 0.25rem;
@@ -20,35 +31,42 @@
 .connected {
   display: flex; /* Use flex to make children appear next to each other */
   align-items: center; /* Align children vertically in the center */
+  color: #32323e;
 }
 
 .connectContainer {
   display: flex; /* Use flex to make its children appear next to each other */
   align-items: center; /* Align children vertically in the center */
+  color: #32323e;
 }
 
 .navigation {
   text-align: right;
   margin-left: 2rem; /* Add margin to move navigation to the left */
   padding-right: 2rem;
+  color: #32323e;
+
 }
 /* Add styles to the navigation links */
 .navigation a {
   color: var(--text-color); /* Set the text color */
   text-decoration: none; /* Remove underline */
-  font-size: 1.2rem; /* Adjust the font size */
+  font-size: 1.4rem; /* Adjust the font size */
   margin: 0.5rem 1rem; /* Add spacing between links */
   transition: color 0.3s ease; /* Smooth color transition on hover */
+  color: #129a36;
+  
 }
 
 /* Change link color on hover */
 .navigation a:hover {
-  color: var(--accent-color-to); /* Change the color on hover */
+  color: #129a36; /* Change the color on hover */
+  font-weight: bold;
 }
 
 /* Style for the active link */
 .navigation .active {
-  font-weight: bold; /* Make the active link bold */
-  color: var(--accent-color); /* Set the active link color */
+  font-weight: bolder; /* Make the active link bold */
+  color: #129a36; /* Set the active link color */
 }
 

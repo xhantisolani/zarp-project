@@ -1,4 +1,5 @@
 .swapCard {
+    padding-top: 1vh;
     background-color: var(--secondary-background-color);
     padding: 2rem;
     position: absolute;
@@ -11,7 +12,10 @@
     gap: 1rem;
     width: 400px;
   }
-  
+  .swapCard:hover {
+    transform: translate(-50%, -50%) scale(1.01);
+}
+ 
   .formGroup {
     display: flex;
   }
@@ -24,7 +28,9 @@
     border-radius: 0.75rem 0 0 0.75rem;
     border: 1px solid var(--tertiary-background-color);
   }
-  
+  .formControl:hover:not(:disabled) {
+    transform: scale(1.01);
+}
   .formControl:disabled {
     background-color: hsl(240, 6%, 19%);
     border: 1px solid hsl(240, 6%, 19%);
@@ -38,7 +44,7 @@
     background-color: var(--tertiary-background-color);
     border-radius: 0 1.25rem 1.25rem 0;
   }
-  
+ 
   .tokenIcon {
     width: 1.5rem;
     height: 1.5rem;
@@ -60,24 +66,63 @@
     text-align: center;
     color: #ffe400;
     font-size: xx-large;
-    padding-top: 50px;
+    padding-top: 1vh;
   }
+  
+  .LogoSmall{
+    font-weight: bold;
+    text-align: center;
+    color: #efdc2eef;
+    font-size: large;
+    padding-top: 3vh;
+    z-index: -1;
+  }
+  
+  .additionalText{
+    font-weight: bold;
+    position: relative;
+    color: #efdc2eef;
+    font-size: large;
+    
+    padding-top: 3vh;
+    top: 48vh;
+    text-align: center;
+  }
+
+  .additionalText a {
+    color: #129a36 ; /* To match the color of the surrounding text */
+    text-decoration: underline; /* To show it's a hyperlink */
+}
+
+.additionalText a :hover{
+  transform: scale(1.02)
+}
+
+  
+
   .userView{
     font-weight: bold;
-    color: #ffe400;
-    font-size: xx-large;
-    padding-left: 30px;
+    position: relative;
+    color: #efdc2eef;
+    font-size: large;
+    padding-left: 35vw;
+    padding-top: 3vh;
+    top: 48vh;
   }
+
+  
+
   .label {
     color: hsl(240, 6%, 19%);;
     font-weight: bold;
+    padding-bottom: 2vh;
   }
-
+  
 /* CSS */
 .button {
   background-color: #ffe400;
   border-radius: 0.75rem 0 0 0.75rem;
-  color: #8a8a8a;
+  color: #32323e;
   cursor: pointer;
   font-weight: bold;
   padding: 10px 15px;
@@ -96,7 +141,8 @@
 .button:not(:disabled):focus {
   outline: 0;
   background: #ffe400;
-  box-shadow: 0 0 0 2px rgba(0,0,0,.2), 0 3px 8px 0 rgba(0,0,0,.15);
+  box-shadow: #129a36;
+  transform: scale(1.01);
 }
 
 .button:disabled {
@@ -106,3 +152,88 @@
 }
  
 
+
+.things > .content {
+  float: left;
+  width: 50%;
+  height: 500px;
+  -webkit-box-sizing: border-box; 
+	-moz-box-sizing: border-box;    
+	box-sizing: border-box;
+  position: relative;
+}
+
+.things > .content h1 {
+  font-family: 'Arial', sans-serif;
+  text-transform: uppercase;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  position: absolute;
+  height: 150px;
+  color: #89323B;
+}
+
+/* Arrow */
+
+.curvedArrow {
+	position: relative;
+  margin: 0 auto;
+  width: 100px;
+  z-index: 10;
+}
+
+.curvedArrow .curve {
+	border: 2px solid #BE5F4B;
+	height: 360px;
+	width: 1200px;
+	border-radius: 230px 0 0 150px;
+}
+
+.curvedArrow .point {
+	position: absolute;
+	left: 40px;
+	top: 315px;
+}
+
+.curvedArrow .point:before, .curvedArrow .point:after {
+	border: 1px solid #BE5F4B;
+	height: 25px;
+	position: absolute;
+}
+
+.curvedArrow .point:before {
+	top: -11px;
+	left: -11px;
+	transform:rotate(-74deg);
+	-webkit-transform:rotate(-74deg);
+  -moz-transform:rotate(-74deg);
+  -ms-transform: rotate(-74deg);
+}
+
+.curvedArrow .point:after {
+  top: -20px;
+	left: 5px;
+	transform:rotate(12deg);
+	-webkit-transform: rotate(12deg);
+  -moz-transform:rotate(12deg);
+  -ms-transform: rotate(12deg);
+}
+
+
+.curvedArrow:hover {
+  animation: bounce 1.0s infinite;
+}
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: rotate(45deg) translateY(0);
+  }
+  40% {
+    transform: rotate(45deg) translateY(-10px);
+  }
+  60% {
+    transform: rotate(45deg) translateY(-5px);
+  }
+}

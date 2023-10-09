@@ -14,7 +14,7 @@
 
 body {
   margin: 0;
-  background-image: url('../UI//zarp.svg');
+  /* background-image: url('../UI//zarp.svg'); */
   background-color: var(--primary-background-color);
   color-scheme: dark;
   font-family: sans-serif;
