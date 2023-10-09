@@ -14,7 +14,6 @@ import Spinner from "./Spinner";
 import { Token } from "@uniswap/sdk-core";
 import ErrorModal from "./ErrorModal";
 import { getCurrencyBalance } from "../libs/wallet";
-import CurvedArrow from "./CurvedArrow";
 
 //comment test
 // xhanti comment
