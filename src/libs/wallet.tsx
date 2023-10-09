@@ -21,7 +21,7 @@ export async function getCurrencyBalance(
   currency: Token
 ): Promise<string> {
   // Handle ETH directly
-  if (currency.symbol == "ETH") {
+  if (currency.symbol == "ENS") {
     const formattedBalance = ethers.utils.formatEther(
       await provider.getBalance(address)
     );
