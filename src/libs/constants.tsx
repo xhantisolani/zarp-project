@@ -7,7 +7,7 @@ import { SUPPORTED_CHAINS, Token } from '@uniswap/sdk-core'
 export const POOL_FACTORY_CONTRACT_ADDRESS =
   '0x1F98431c8aD98523631AE4a59f267346ea31F984'
 export const QUOTER_CONTRACT_ADDRESS = '0x61fFE014bA17989E743c5F6cB21bF9697530B21e'
-
+                                   
 export const SWAP_ROUTER_ADDRESS = '0xE592427A0AEce92De3Edee1F18E0157C05861564'
 //0xE592427A0AEce92De3Edee1F18E0157C05861564
 // 0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45 v3 swapRouter
@@ -548,8 +548,8 @@ export const WETH_ABI = [
 // Transactions
 export const Tokens = [USDC_TOKEN, WETH_TOKEN, ZARP_TOKEN, ENS_TOKEN ];
 // Gas fee values as strings in wei
-export const MAX_FEE_PER_GAS = '100000000000'; // 100 gwei
-export const MAX_PRIORITY_FEE_PER_GAS = '100000000000'; // 100 gwei
+export const MAX_FEE_PER_GAS = '100000000'; // 100 gwei
+export const MAX_PRIORITY_FEE_PER_GAS = '10000000'; // 100 gwei
 
 // Amount of tokens to approve for transfer
-export const TOKEN_AMOUNT_TO_APPROVE_FOR_TRANSFER = '2000'; // 2000 tokens
+export const TOKEN_AMOUNT_TO_APPROVE_FOR_TRANSFER = '20000000000000'; // 2000 tokens

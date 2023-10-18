@@ -104,5 +104,25 @@
   -webkit-filter: saturate(0.5) opacity(0.5);
   cursor: not-allowed;
 }
- 
+
+
+.dropDown {
+  width: 6rem; /* Set the width of the dropdown */
+  padding: 5px;
+  border: 1px solid #ccc; /* Add a border */
+  border-radius: 4px; /* Rounded corners */
+  background-color: #fff; /* Background color */
+  color: #333; /* Text color */
+}
+
+.dropDown:focus {
+  outline: none; /* Remove the outline when focused */
+  border-color: #007bff; /* Change border color on focus */
+}
+
+.dropDown option {
+  background-color: #fff; /* Background color of options */
+  color: #333; /* Text color of options */
+}
+
 

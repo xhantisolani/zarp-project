@@ -56,7 +56,7 @@ const closeErrorModal = () => {
     }
   } catch (error) {
     openErrorModal('Error fetching wallet balance');
-    return; // Return null to indicate an error
+    return setTokenInBalance(''); // Return null to indicate an error
   }
 }
 
@@ -96,14 +96,14 @@ function setAmountIn(amount: string) {
 
 
   // functions to set up the trade the tokens
-  const onCreateTrade = useCallback(async () => {
+  async function onCreateTrade () {
     setTrade(await createTrade());
-  }, []);
+  };
 
 
 
 
-  const onTrade = useCallback(async (trade: TokenTrade | undefined) => {
+  async function onTrade (trade: TokenTrade | undefined) {
     if (trade) {
       setIsLoading(true); // Set loading to true before executing the trade
   
@@ -113,12 +113,10 @@ function setAmountIn(amount: string) {
         openErrorModal(`Token with address ${error} not found.`);
         // Handle the error as needed
       } finally {
-        setTxState(TransactionState.Rejected);
         setIsLoading(false); // Set loading to false when the trade operation completes
       }
     }
-  }, []);
-  
+  };
 
 
 return (  
@@ -152,6 +150,7 @@ return (
             }
           } } />
         <select
+        className={styles.dropDown}
         value={selectedTokenIn ? selectedTokenIn.address : ''}
         name={"FirstToken"}
         onChange={(e) => {
@@ -163,7 +162,7 @@ return (
           setTokenIn(token as Token);
         }}
       >
-        <option value="">Token</option>
+        <option value="">ZARP</option>
         {tokenOptions.map((token) => (
            <option key={token.address} value={token.address}>
            {token.symbol}
@@ -180,19 +179,26 @@ return (
         name={"displaySecondToken"}
         value={trade ? ` ${displayTrade(trade)}` : ''}
         disabled 
+        onChange={(e) => {
+          if(selectedTokenIn == null)
+          {
+            openErrorModal('Select Tokens to swap')
+          }
+        }}
        />
         
         <select
+        className={styles.dropDown}
         value={selectedTokenOut ? selectedTokenOut.address : ''}
         name={"SecondToken"}
         onChange={(e) => {
           const selectedTokenAddress = e.target.value;
           const token = tokenOptions.find((token) => token.address === selectedTokenAddress);          
-          setSelectedTokenOut(token || null);
+          setSelectedTokenOut(token as Token);
           setTokenOut(token as Token);
         }}
       >
-        <option value="">Token</option>
+        <option value="">USDC</option>
         {tokenOptions.map((token) => (
            <option key={token.address} value={token.address}>
            {token.symbol}

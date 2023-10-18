@@ -247,6 +247,7 @@ export function SendTransaction() {
 
  
       <select
+       className={styles.dropDown}
         value={selectedToken ? selectedToken.address : ''}
         onChange={(e) => {
           const selectedTokenAddress = e.target.value;
