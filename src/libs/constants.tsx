@@ -19,18 +19,42 @@ export const WETH_CONTRACT_ADDRESS =
 export const WETH_TOKEN = new Token(
   SUPPORTED_CHAINS[7],
   // WETH address on goerli
-  '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6', // goerli Eth token
+  '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6', // goerli Eth token 
   18,
   'WETH',
   'Wrapped Ether'
 )
+export const POUND_TOKEN = new Token(
+  SUPPORTED_CHAINS[7],
+  // Pound address on goerli
+  '0x6C1558e667C0c913F49FC1448C2373E261ff5c82', // goerli Eth token 
+  18,
+  'GPD',
+  'Pound Sterling'
+) 
 
+export const EURO_TOKEN = new Token(
+  SUPPORTED_CHAINS[7],
+  // Pound address on goerli
+  '0xC581b735A1688071A1746c968e0798D642EDE491', // goerli Eth token 
+  18,
+  'EURT',
+  'Euro Tether (EURT)'
+)
 export const USDC_TOKEN = new Token(
   SUPPORTED_CHAINS[7],
   '0xD87Ba7A50B2E7E660f678A895E4B72E7CB4CCd9C', 
   6,
   'USDC',
   'USDC'
+)
+
+export const GEYN_TOKEN = new Token(
+  SUPPORTED_CHAINS[7],
+  '0xC08512927D12348F6620a698105e1BAac6EcD911', 
+  6,
+  'GYEN',
+  'Japanese Yen (GYEN)'
 )
 export const ZARP_TOKEN = new Token(
   SUPPORTED_CHAINS[7],
@@ -43,7 +67,7 @@ export const ENS_TOKEN = new Token(
   SUPPORTED_CHAINS[7],
   '0xC18360217D8F7Ab5e7c516566761Ea12Ce7F9D72',
   18,
-  'ENS',
+  'ETH',
   'Ethereum Name Service'
 )
 

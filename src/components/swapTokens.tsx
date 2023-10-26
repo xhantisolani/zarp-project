@@ -19,7 +19,7 @@ export function SwapTokens() {
   const [tokenInBalance, setTokenInBalance] = useState<string>()
   const [passedAmount, sePassedAmount] = useState<string>()
   const [trade, setTrade] = useState<TokenTrade>()
-  const [txState, setTxState] = useState<TransactionState>(TransactionState.New)
+  const [txState, setTxState] = useState<TransactionState>()
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null); // State for storing error messages
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
@@ -56,7 +56,7 @@ const closeErrorModal = () => {
     }
   } catch (error) {
     openErrorModal('Error fetching wallet balance');
-    return setTokenInBalance(''); // Return null to indicate an error
+    return setTokenInBalance('0'); // Return null to indicate an error
   }
 }
 
@@ -96,27 +96,29 @@ function setAmountIn(amount: string) {
 
 
   // functions to set up the trade the tokens
-  async function onCreateTrade () {
+  const onCreateTrade = useCallback(async () => {
     setTrade(await createTrade());
-  };
+  }, []);
 
 
 
 
-  async function onTrade (trade: TokenTrade | undefined) {
+  const onTrade = useCallback(async (trade: TokenTrade | undefined) => {
     if (trade) {
       setIsLoading(true); // Set loading to true before executing the trade
   
-      try {        
+      try {     
+           
         setTxState(await executeTrade(trade));
       } catch (error) {
-        openErrorModal(`Token with address ${error} not found.`);
+        openErrorModal(`cannot execute trade ${error} not found.`);
         // Handle the error as needed
       } finally {
         setIsLoading(false); // Set loading to false when the trade operation completes
       }
     }
-  };
+  }, []);
+  
 
 
 return (  
@@ -128,11 +130,11 @@ return (
     <div>
 
       <div className={styles.body}>
-        {CurrentConfig.env === Environment.MAINNET && getProvider() === null && (
+        {CurrentConfig.env === Environment.WALLET_EXTENSION && getProvider() === null && (
           <h2 className="error">Please install a wallet to use this example configuration   </h2>)}
       </div>
 
-      <p  className={styles.label}>Balance: {tokenInBalance}  {selectedTokenIn?.symbol}  Transaction State: {txState }</p>
+      <p  className={styles.label}>Balance: {tokenInBalance}      Transaction State: {txState }</p>
       <div className={styles.formGroup}>
         <input
           className={styles.formControl}
@@ -162,7 +164,7 @@ return (
           setTokenIn(token as Token);
         }}
       >
-        <option value="">ZARP</option>
+        <option value="">Token</option>
         {tokenOptions.map((token) => (
            <option key={token.address} value={token.address}>
            {token.symbol}
@@ -179,12 +181,6 @@ return (
         name={"displaySecondToken"}
         value={trade ? ` ${displayTrade(trade)}` : ''}
         disabled 
-        onChange={(e) => {
-          if(selectedTokenIn == null)
-          {
-            openErrorModal('Select Tokens to swap')
-          }
-        }}
        />
         
         <select
@@ -194,11 +190,11 @@ return (
         onChange={(e) => {
           const selectedTokenAddress = e.target.value;
           const token = tokenOptions.find((token) => token.address === selectedTokenAddress);          
-          setSelectedTokenOut(token as Token);
+          setSelectedTokenOut(token || null);
           setTokenOut(token as Token);
         }}
       >
-        <option value="">USDC</option>
+        <option value="">Token</option>
         {tokenOptions.map((token) => (
            <option key={token.address} value={token.address}>
            {token.symbol}
@@ -234,3 +230,4 @@ return (
 }
 // Export the swapTokens function
 export default SwapTokens;
+
